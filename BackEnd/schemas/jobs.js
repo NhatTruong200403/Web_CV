@@ -14,7 +14,7 @@ const jobSchema = new mongoose.Schema(
     },
     positionId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Position",
+      ref: "PositionType",
       required: true,
     },
     details: [{
