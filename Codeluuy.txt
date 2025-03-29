@@ -1,0 +1,54 @@
+database
+
++ Người dùng
++ Role
++ Công ty
++ Loại công ty
++ Việc làm
++ Loại việc làm
++ Bài đăng 
++ 
+
+
+📌 Sơ đồ chức vụ tổng quát
+1️⃣ - Cấp Thấp (Entry Level) - Nhân viên mới vào nghề
+Intern (Thực tập sinh)
+
+Trainee (Nhân viên tập sự)
+
+Junior Staff (Nhân viên sơ cấp)
+
+Staff / Employee (Nhân viên chính thức)
+
+Specialist (Chuyên viên)
+
+2️⃣ - Cấp Trung (Mid-Level) - Quản lý nhóm, dự án
+Senior Staff (Nhân viên cao cấp)
+
+Supervisor (Giám sát viên)
+
+Team Leader (Trưởng nhóm)
+
+Coordinator (Điều phối viên)
+
+Assistant Manager (Phó phòng / Trợ lý quản lý)
+
+3️⃣ - Cấp Quản Lý (Management Level) - Quản lý cấp trung
+Manager (Trưởng phòng)
+
+Project Manager (Quản lý dự án)
+
+Branch Manager (Giám đốc chi nhánh)
+
+Department Head (Trưởng bộ phận)
+
+4️⃣ - Cấp Cao (Senior Management) - Lãnh đạo cấp cao
+Director (Giám đốc điều hành bộ phận)
+
+Vice President (Phó tổng giám đốc)
+
+Chief Officer (CXO - Giám đốc chức năng: CFO, CTO, CMO, CHRO, etc.)
+
+General Director (Tổng giám đốc - CEO)
+
+Chairman (Chủ tịch hội đồng quản trị)
