@@ -1,8 +1,8 @@
 module.exports={
-    SECRET_KEY:"NNPTUD_S5",
-    ADMIN_PERMISSION:['admin'],
-    MOD_PERMISSION:['admin','mod'],
-    USER_PERMISSION:['admin','mod','user'],
+    ADMIN_PERMISSION:['Admin'],
+    COMPANY_PERMISSION:['Company'],
+    MOD_PERMISSION:['Admin','Mod'],
+    USER_PERMISSION:['Admin','Mod','User'],
     ERROR_EMAIL:"Email phai co dang xxx@domain",
     ERROR_USERNAME:"Username chi co the la chu hoac so",
     ERROR_PASSWORD:"Password dai it nhat %d ki tu, co it nhat %d chu thuong, %d chu hoa, %d so  va %d ki tu",

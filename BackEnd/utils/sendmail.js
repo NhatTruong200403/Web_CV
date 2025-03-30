@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 module.exports = {
     sendmail: async function (to, subject, URL) {
         return await transporter.sendMail({
-            from: 'NNPTDU@heheheh.com',
+            from: 'TopIt2003@gamil.com',
             to: to,
             subject: subject,
             html: `<a href=${URL}>URL</a>`, // html body

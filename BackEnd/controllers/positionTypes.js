@@ -5,6 +5,11 @@ module.exports = {
             isDeleted:false
           })
     },
+    GetpositionTypeByID: async function(id){
+        return await positionTypeModel.findOne({
+            _id:id
+          })
+    },
     CreatepositionType:async function(name){
            try {
             let newPosition = new positionTypeModel({

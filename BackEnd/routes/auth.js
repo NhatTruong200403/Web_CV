@@ -1,6 +1,8 @@
 var express = require('express');
+const passport = require('passport');
 var router = express.Router();
 var userController = require('../controllers/users')
+var authGoogle = require('../utils/auth_gg')
 let { sendSuccess, sendError } = require('../utils/responseHandler');
 let jwt = require('jsonwebtoken')
 let constants = require('../utils/constants')
@@ -9,8 +11,13 @@ let { check_authentication } = require('../utils/check_auth')
 let { validate, validatorLogin,validatorSignup, validatorForgotPassword, validatorChangePassword } = require('../utils/validators')
 let crypto = require('crypto')
 let {sendmail} = require('../utils/sendmail')
-
+router.use(passport.initialize());
 /* GET home page. */
+router.get('/google', authGoogle.authenticate);
+router.get('/google/callback', ...authGoogle.handleCallback);
+
+
+
 router.post('/login',validatorLogin, validate, async function (req, res, next) {
     try {
         let body = req.body;
@@ -32,10 +39,7 @@ router.post('/signup',validatorSignup, validate, async function (req, res, next)
         let newUser = await userController.CreateAnUser(
             body.username, body.password, body.email, 'User'
         )
-        sendSuccess(res, jwt.sign({
-            id: newUser._id,
-            expire: (new Date(Date.now() + 60 * 60 * 1000)).getTime()
-        }, key.SECRET_KEY),"Signup successfully", 200);
+        sendSuccess(res, null,"Signup successfully", 200);
     } catch (error) {
         next(error)
     }
@@ -67,13 +71,13 @@ router.post('/forgotpassword', validatorForgotPassword, validate, async function
             user.resetPasswordTokenExp = (new Date(Date.now() + 10 * 60 * 1000)).getTime();
             await user.save();
             let url = `http://localhost:3000/auth/reset_password/${user.resetPasswordToken}`
-            await sendmail(user.email,"bam vao day di anh chai",url)
+            await sendmail(user.email,"Reset password",url)
             sendSuccess(res, {
                 url: url
             },"Gui mail thanh cong", 200)
             
         } else {
-            throw new Error("email khong ton tai")
+            return sendError(res, "Email khong ton tai", "SERVER_ERROR", 500)
         } 
     } catch (error) {
         next(error)
@@ -86,7 +90,6 @@ router.post('/reset_password/:token', validatorChangePassword,
 validate, async function (req, res, next) {
     try {
         let token = req.params.token;
-        console.log(token)
         let user = await userController.GetUserByToken(token);
         if (user) {
             let newpassword = req.body.password;
@@ -96,7 +99,7 @@ validate, async function (req, res, next) {
             await user.save();
             sendSuccess(res, user,"Change password successfully", 200)
         } else {
-            throw new Error("email khong ton tai")
+            return sendError(res, "Email khong ton tai", "SERVER_ERROR", 500)
         }
     } catch (error) {
         next(error)

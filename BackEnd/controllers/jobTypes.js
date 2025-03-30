@@ -5,6 +5,11 @@ module.exports = {
             isDeleted:false
           })
     },
+    GetJobTypeById: async function(is){
+        return await jobTypeModel.findOne({
+            _id:is
+          })
+    },
     CreateJobType:async function(name){
            try {
             let newJobType = new jobTypeModel({

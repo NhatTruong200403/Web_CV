@@ -1,57 +1,60 @@
 const cloudinary = require("cloudinary").v2;
-// Cấu hình Cloudinary
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Upload hình ảnh
+
+// Upload hình ảnh (avatar)
 async function uploadImage(file, folder) {
+  const allowedImageTypes = ["image/jpeg", "image/png", "image/gif"];
+  if (!file.buffer || !allowedImageTypes.includes(file.mimetype)) {
+    throw new Error("Invalid file: Must be an image (JPEG, PNG, GIF)");
+  }
+  return uploadToCloudinary(file, {
+    folder: folder,
+    resource_type: "auto",
+  });
+}
+
+// Upload CV (PDF only)
+async function uploadCV(file, folder) {
+  const randomName = `cv_${Date.now()}_${Math.random().toString(36).substring(2, 15)}.pdf`;
+  if (!file.buffer || file.mimetype !== "application/pdf") {
+    throw new Error("Invalid file: Must be a PDF");
+  }
+  return uploadToCloudinary(file, {
+    folder: folder,
+    resource_type: "raw",
+    access_mode: "public",
+    allowed_formats: ["pdf"],
+    public_id: randomName,
+  });
+}
+
+// Hàm upload chung
+async function uploadToCloudinary(file, options) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: folder, resource_type: "auto" },
+      options,
       (error, result) => {
-        if (error) {
-          reject("Upload failed");
-        } else {
-          resolve(result.secure_url);
-        }
+        if (error) reject(new Error(`Upload failed: ${error.message}`));
+        else resolve(result.secure_url); console.log(result, "result" , result.secure_url);
       }
     );
-
     stream.end(file.buffer);
   });
 }
 
-// Upload CV
-async function uploadCV(file) {
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(
-      file.path,
-      {
-        folder: "cv_uploads",
-        resource_type: "raw", // Cho phép upload các file không phải ảnh
-        // Giới hạn loại file nếu cần
-        allowed_formats: ["pdf", "doc", "docx"],
-      },
-      (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      }
-    );
-  });
-}
 
-// Middleware upload
 async function cloudinaryUpload(req, res, next) {
   try {
-    // Nếu có file ảnh
     if (req.file) {
-      const uploadResult = await uploadImage(req.file);
-      req.uploadedFileUrl = uploadResult.secure_url;
+      const url = await uploadImage(req.file, "users"); // Mặc định cho ảnh
+      req.uploadedFileUrl = url;
     }
-
     next();
   } catch (error) {
     res.status(400).json({

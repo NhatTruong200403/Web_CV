@@ -1,6 +1,6 @@
 let userModel = require("../schemas/user");
 let roleModel = require("../schemas/role");
-let company = require("../schemas/company");
+let companyModel = require("../schemas/company");
 let bcrypt = require("bcrypt");
 module.exports = {
   GetAllUsers: async function () {
@@ -12,10 +12,13 @@ module.exports = {
     var user = await userModel.findById(id).populate({
       path: "role",
       select: "name",
-    }).select("-password");
-    if (user.role === "company") {
-      const company = await company.findOne({ userId: user._id }).lean();
-      user.company = company;
+    }).select("-password").lean();;
+    let role = await roleModel.findOne({
+      name: "Company",
+    });
+    if (user.role._id.toString() === role._id.toString()) {
+      const company = await companyModel.findOne({ userId: user._id }).lean();
+      user.company = company || null;
     }
     return user;
   },
@@ -57,6 +60,8 @@ module.exports = {
           password: password,
           email: email,
           role: role._id,
+          avatarUrl: "https://res.cloudinary.com/dq7dbaqd3/image/upload/v1743252562/users/wevdajkoxqfqf8gev3zm.jpg",
+          authProvider : "local",
           status: "User",
         });
         return await user.save();
@@ -81,10 +86,33 @@ module.exports = {
       throw new Error(error.message);
     }
   },
-  UpdateRoleCompany: async function (id) {
+  UpdateAvatar: async function (id, url) {
     try {
       let user = await userModel.findById(id);
-      user.role = "company";
+      user.avatarUrl = url;
+      return await user.save();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+  UpdateCV: async function (id, url) {
+    try {
+      let user = await userModel.findById(id);
+      user.cvFile = url;
+      return await user.save();
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+  UpdateRoleCompany: async function (id, rolename) {
+    try {
+      let role = await roleModel.findOne({
+        name: rolename,
+      });
+      console.log("role._id",role._id);
+      let user = await userModel.findById(id);
+      console.log("user", user);
+      user.role = role._id;
       return await user.save();
     } catch (error) {
       throw new Error(error.message);
@@ -101,16 +129,16 @@ module.exports = {
   },
   CheckLogin: async function (username, password) {
     let user = await this.GetUserByUsername(username);
-    console.log(username, password);
+    if (user.authProvider === "google") {
+      throw new Error("Tài khoản này chỉ hỗ trợ đăng nhập qua Google");
+    }
     if (!user) {
-      throw new Error("Username hoc password khong dung");
+      throw new Error("Username hoac password khong dung");
     } else {
-      console.log(password,"      ",user.password);
       if (bcrypt.compareSync(password, user.password)) {
-        console.log(user._id);
         return user._id;
       } else {
-        throw new Error("Username hoc password khong dung");
+        throw new Error("Username hoac password khong dung");
       }
     }
   },
@@ -119,7 +147,7 @@ module.exports = {
       user.password = newpassword;
       return await user.save();
     } else {
-      throw new Error("oldpassword khong dung");
+      throw new Error("Old password khong dung");
     }
   },
 };

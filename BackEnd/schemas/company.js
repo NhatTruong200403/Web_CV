@@ -7,7 +7,7 @@ const companySchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    taxcode: {
+    taxCode: {
       type: String,
       required: true,
       trim: true,

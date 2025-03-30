@@ -8,6 +8,10 @@ router.get('/', async function(req, res, next) {
   let jobTypes = await positionTypeController.GetAllpositionTypes();
   sendSuccess(res,jobTypes,"Get all position types successfully",200);
 });
+router.get('/:id', async function(req, res, next) {
+  let jobTypes = await positionTypeController.GetpositionTypeByID(req.params.id);
+  sendSuccess(res,jobTypes,"Get all position types successfully",200);
+});
 
 router.post('/', async function(req, res, next) {
  try {
