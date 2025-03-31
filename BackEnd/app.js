@@ -34,6 +34,15 @@ app.use('/jobs', require('./routes/jobs'));
 app.use('/jobTypes', require('./routes/jobTypes'));
 
 
+// const port = 3000;
+// app.listen(port, () => {
+//   console.log(`🚀Server đang chạy tại 127.0.0.1:${port}`);
+// })
+
+// chấp nhận tất cả cors truy cập
+app.use(cors());
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
