@@ -18,7 +18,7 @@ router.get('/google/callback', ...authGoogle.handleCallback);
 
 
 
-router.post('/login',validatorLogin, validate, async function (req, res, next) {
+router.post('/login', validate, async function (req, res, next) {
     try {
         let body = req.body;
         let username = body.username;
@@ -29,6 +29,7 @@ router.post('/login',validatorLogin, validate, async function (req, res, next) {
             expire: (new Date(Date.now() + 60 * 60 * 1000)).getTime()
         }, key.SECRET_KEY),"Login successfully", 200)
     } catch (error) {
+        sendError(res, error.message, "SERVER_ERROR", 500)
         next(error)
     }
 });
