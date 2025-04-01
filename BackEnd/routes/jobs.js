@@ -20,23 +20,23 @@ router.post("/", check_authentication, check_authorization(constants.COMPANY_PER
     let newJobType = await jobsController.CreateJob(req.body);
     sendSuccess(res, newJobType, "Create job successfully", 200);
   } catch (error) {
-    next(error);
+    sendError(res, error.message, "SERVER_ERROR", 500);
   }
 });
-router.put("/:id",  check_authentication, check_authorization(constants.USER_PERMISSION), async function (req, res, next) {
+router.put("/:id",  check_authentication, check_authorization(constants.COMPANY_PERMISSION), async function (req, res, next) {
   try {
-    let newJobType = await jobsController.UpdateJob(req.params.id,req.body);
-    sendSuccess(res, newJobType, "Create job successfully", 200);
+    let newJobType = await jobsController.UpdateJob(req.params.id,req.body, req.user);
+    sendSuccess(res, newJobType, "Update job successfully", 200);
   } catch (error) {
-    next(error);
+    sendError(res, error.message, "SERVER_ERROR", 500);
   }
 });
-router.delete("/:id",  check_authentication, check_authorization(constants.USER_PERMISSION),async function (req, res, next) {
+router.delete("/:id",  check_authentication, check_authorization(constants.COMPANY_PERMISSION),async function (req, res, next) {
   try {
-    let job = await jobsController.DeleteJob(req.params.id);
+    let job = await jobsController.DeleteJob(req.params.id, req.user);
     sendSuccess(res, job, "Delete job successfully", 200);
   } catch (error) {
-    next(error);
+    sendError(res, error.message, "SERVER_ERROR", 500);
   }
 })
 module.exports = router;
