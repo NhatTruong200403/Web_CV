@@ -5,6 +5,7 @@ const jobSchema = new mongoose.Schema(
     title: { type: String, required: true, trim: true },
     companyId: { type: mongoose.Schema.Types.ObjectId, ref: "Company", required: true },
     jobApplyPositionId: { type: mongoose.Schema.Types.ObjectId, ref: "PositionType", required: true },
+    jobType: { type: mongoose.Schema.Types.ObjectId, ref: "JobType", required: true },
     details: [{ type: String, required: true }],
     benefits: [{ type: String, required: true }],
     descriptions: [{ type: String, required: true }],
@@ -20,7 +21,7 @@ const jobSchema = new mongoose.Schema(
       },
       required: true,
     },
-    jobType: { type: mongoose.Schema.Types.ObjectId, ref: "JobType", required: true },
+    
     status: { type: String, enum: ["pending", "approved", "closed"], default: "pending" },
   },
   { timestamps: true }

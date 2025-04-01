@@ -6,7 +6,7 @@ let constants = require('../utils/constants')
 const { check_authentication, check_authorization } = require("../utils/check_auth");
 
 router.get("/", async function (req, res, next) {
-  let jobTypes = await jobsController.GetAllpositionTypes();
+  let jobTypes = await jobsController.GetAllJobs();
   sendSuccess(res, jobTypes, "Get all jobs successfully", 200);
 });
 router.get("/:id", async function (req, res, next) {
