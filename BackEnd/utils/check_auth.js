@@ -29,6 +29,7 @@ module.exports = {
     check_authorization: function (roles) {
         return async function (req, res, next) {
             try {
+                console.log(req.user,"    --------------------------------   ",roles);
                 let roleOfUser = req.user.role.name;
                 if (roles.includes(roleOfUser)) {
                     next();

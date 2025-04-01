@@ -15,7 +15,7 @@ router.get("/:id", async function (req, res, next) {
   sendSuccess(res, jobTypes, "Get job successfully", 200);
 });
 
-router.post("/", check_authentication, check_authorization(constants.USER_PERMISSION),async function (req, res, next) {
+router.post("/", check_authentication, check_authorization(constants.COMPANY_PERMISSION),async function (req, res, next) {
   try {
     let newJobType = await jobsController.CreateJob(req.body);
     sendSuccess(res, newJobType, "Create job successfully", 200);
