@@ -1,0 +1,79 @@
+[
+    {
+      "name": "Intern",
+      "description": "Thực tập sinh"
+    },
+    {
+      "name": "Trainee",
+      "description": "Nhân viên tập sự"
+    },
+    {
+      "name": "Junior Staff",
+      "description": "Nhân viên sơ cấp"
+    },
+    {
+      "name": "Staff",
+      "description": "Nhân viên chính thức"
+    },
+    {
+      "name": "Specialist",
+      "description": "Chuyên viên"
+    },
+    {
+      "name": "Senior Staff",
+      "description": "Nhân viên cao cấp"
+    },
+    {
+      "name": "Supervisor",
+      "description": "Giám sát viên"
+    },
+    {
+      "name": "Team Leader",
+      "description": "Trưởng nhóm"
+    },
+    {
+      "name": "Coordinator",
+      "description": "Điều phối viên"
+    },
+    {
+      "name": "Assistant Manager",
+      "description": "Phó phòng / Trợ lý quản lý"
+    },
+    {
+      "name": "Manager",
+      "description": "Trưởng phòng"
+    },
+    {
+      "name": "Project Manager",
+      "description": "Quản lý dự án"
+    },
+    {
+      "name": "Branch Manager",
+      "description": "Giám đốc chi nhánh"
+    },
+    {
+      "name": "Department Head",
+      "description": "Trưởng bộ phận"
+    },
+    {
+      "name": "Director",
+      "description": "Giám đốc điều hành bộ phận"
+    },
+    {
+      "name": "Vice President",
+      "description": "Phó tổng giám đốc"
+    },
+    {
+      "name": "Chief Officer",
+      "description": "Giám đốc chức năng (CFO, CTO, CMO, CHRO, etc.)"
+    },
+    {
+      "name": "General Director",
+      "description": "Tổng giám đốc - CEO"
+    },
+    {
+      "name": "Chairman",
+      "description": "Chủ tịch hội đồng quản trị"
+    }
+  ]
+  

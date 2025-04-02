@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const key = require("../config");
 const { sendSuccess } = require("./responseHandler");
 
-// Hàm tạo token
 const generateToken = (user) => {
   const expireTime = Date.now() + 24 * 60 * 60 * 1000; // 1 ngày
   return jwt.sign(

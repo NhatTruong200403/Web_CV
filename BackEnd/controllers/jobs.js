@@ -10,6 +10,40 @@ module.exports = {
       .populate("jobApplyPositionId")
       .populate("jobType");
   },
+  GetAllJobsByCompanyId: async function (companyid) {
+    return await jobModel
+      .find({ companyId: companyid })
+      .populate("jobApplyPositionId")
+      .populate("jobType");
+  },
+  GetAllJobApplies: async function (jobId, userId) {
+    try {
+      const jobfind = await jobModel.findById(jobId).populate({
+        path: "companyId",
+        populate: { path: "userId" },
+      });
+      if(jobfind.companyId.userId._id.toString() !== userId.toString()){
+        throw new Error("You don't have permission");
+      }
+      const job = await jobModel
+        .findById(jobId)
+        .populate({
+          path: "applicants"
+        })
+        // .populate({
+        //   path: "companyId",
+        //   populate: { path: "userId" },
+        // })
+        // .populate("jobApplyPositionId")
+        // .populate("jobType");
+      if (!job) {
+        throw new Error("Job not found");
+      }
+      return job;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
   GetJobById: async function (id) {
     return await jobModel
       .findOne({
@@ -48,6 +82,28 @@ module.exports = {
       throw new Error(error.message);
     }
   },
+  ApplyJob: async function (jobId, userId) {
+    try {
+      let job = await jobModel.findById(jobId);
+      if (!job) {
+        throw new Error('Job not found');
+      }
+      if (!job.applicants.includes(userId)) {
+        job = await jobModel.findByIdAndUpdate(
+          jobId,
+          {
+            $push: { applicants: userId },
+          },
+          { new: true }
+        );
+      }
+  
+      return job;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+  
   DeleteJob: async function (id, user) {
     try {
       let job = await jobModel.findById(id).populate("companyId");

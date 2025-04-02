@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose')
+mongoose.set('strictQuery', false);
 var cors = require('cors');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -26,6 +27,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// add database
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/companies', require('./routes/companies'));
@@ -33,6 +36,7 @@ app.use('/roles', require('./routes/roles'));
 app.use('/auth', require('./routes/auth'));
 app.use('/jobs', require('./routes/jobs'));
 app.use('/jobTypes', require('./routes/jobTypes'));
+app.use('/positonTypes', require('./routes/positionTypes'));
 
 
 // const port = 3000;

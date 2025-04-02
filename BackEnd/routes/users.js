@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 let userController = require("../controllers/users");
+var generatePdf = require("../cv-generator/generate_cv");
 let {
   check_authentication,
   check_authorization,
@@ -19,6 +20,52 @@ router.get(
     try {
       let users = await userController.GetAllUsers();
       sendSuccess(res, users, "Get info user successfully", 200);
+    } catch (error) {
+      sendError(res, error.message, "SERVER_ERROR", 500);
+    }
+  }
+);
+router.get("/cv", async function (req, res, next) {
+  try {
+
+      const pdfBuffer = await generatePdf.generatePdf();
+
+      if (!pdfBuffer) {
+           console.error("Hàm generatePdf không trả về buffer.");
+           return sendError(res, "Không thể tạo file PDF", "PDF_GENERATION_FAILED", 500);
+      }
+
+      console.log("PDF Buffer đã được tạo, dung lượng:", pdfBuffer.length, "bytes");
+      console.log("Bắt đầu upload lên cloud...");
+
+      // --- SỬA ĐỔI CHÍNH Ở ĐÂY ---
+      // Tạo đối tượng 'file' mà hàm uploadCV mong đợi
+      const fileObjectForUpload = {
+          buffer: pdfBuffer,       // Dữ liệu buffer
+          mimetype: "application/pdf" // Kiểu MIME
+      };
+      const folderName = "CV"; // Tên thư mục bạn muốn
+
+      // Gọi uploadCV với đối tượng và tên thư mục
+      const url = await uploadCV(fileObjectForUpload, folderName);
+      // --- KẾT THÚC SỬA ĐỔI ---
+
+      console.log("Upload thành công, URL:", url);
+      sendSuccess(res, { pdfUrl: url }, "Tạo và upload CV thành công", 200);
+
+  } catch (error) {
+      console.error("Lỗi trong route /cv:", error);
+      sendError(res, error.message || "Lỗi máy chủ không xác định", "SERVER_ERROR", 500);
+  }
+});
+router.get(
+  "/applies",
+  check_authentication,
+  check_authorization(constants.USERR_PERMISSION),
+  async function (req, res, next) {
+    try {
+      let users = await userController.GetAllApplyById(req.user._id);
+      sendSuccess(res, users, "Get apply user successfully", 200);
     } catch (error) {
       sendError(res, error.message, "SERVER_ERROR", 500);
     }
@@ -85,7 +132,6 @@ router.post(
 router.post(
   "/uploadAvatar",
   check_authentication,
-  check_authorization(constants.USER_PERMISSION),
   upload.single("avatar"),
   async function (req, res, next) {
     try {
@@ -103,7 +149,8 @@ router.post(
 //test
 router.post(
   "/uploadCV",
-  // check_authentication, check_authorization(constants.USER_PERMISSION),
+  check_authentication, 
+  check_authorization(constants.USER_PERMISSION),
   upload.single("CV"),
   async function (req, res, next) {
     try {
@@ -111,9 +158,8 @@ router.post(
         return sendError(res, "No file uploaded", "SERVER_ERROR", 500);
       }
       let url = await uploadCV(req.file, "users");
-      console.log(url);
       let user = await userController.UpdateCV(req.user._id, url);
-      sendSuccess(res, url, "Update avatar user successfully", 200);
+      sendSuccess(res, user, "Update avatar user successfully", 200);
     } catch (error) {
       next(error);
     }

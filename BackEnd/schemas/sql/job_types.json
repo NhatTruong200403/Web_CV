@@ -1,0 +1,8 @@
+[
+    { "name": "Full-time", "description": "Làm việc toàn thời gian" },
+    { "name": "Part-time", "description": "Làm việc bán thời gian" },
+    { "name": "Internship", "description": "Thực tập sinh" },
+    { "name": "Freelance", "description": "Làm việc tự do" },
+    { "name": "Contract", "description": "Hợp đồng ngắn hạn/dài hạn" }
+  ]
+  

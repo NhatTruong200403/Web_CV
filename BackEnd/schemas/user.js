@@ -17,13 +17,14 @@ const userSchema = new mongoose.Schema(
     role: { type: mongoose.Schema.Types.ObjectId, ref: "Role", required: true },
     phonenumber: { type: String, trim: true },
     authProvider: { type: String, trim: true },
+    appliJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
     status: { type: String, trim: true },
   },
   { timestamps: true }
 );
 
 // 🔥 Danh sách các trường cho phép cập nhật
-const allowFields = ["email", "avatarUrl", "avatarUrl", "cvFile", "phonenumber"];
+const allowFields = ["email", "username", "avatarUrl", "cvFile", "phonenumber"];
 
 // 🔐 Hash mật khẩu trước khi lưu
 userSchema.pre("save", function (next) {
@@ -47,6 +48,13 @@ userSchema.methods.updateAllowedFields = async function (newData) {
 userSchema.methods.updatePassword = async function (newPassword) {
   let salt = bcrypt.genSaltSync(10);
   this[field] = bcrypt.hashSync(newData[field], salt);
+};
+
+userSchema.methods.applyForJob = async function(jobId) {
+  if (!this.applyForJob.includes(jobId)) {
+    this.applyForJob.push(jobId);
+    await this.save();
+  }
 };
 
 const User = mongoose.model("User", userSchema);

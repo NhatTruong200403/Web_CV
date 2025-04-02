@@ -2,11 +2,32 @@ let userModel = require("../schemas/user");
 let roleModel = require("../schemas/role");
 let companyModel = require("../schemas/company");
 let bcrypt = require("bcrypt");
+const UserModel = require("moongose/models/user_model");
 module.exports = {
   GetAllUsers: async function () {
     return await userModel.find({
       status: false,
     });
+  },
+  GetAllApplyById: async function (userId) {
+    try {
+      const user = await userModel
+        .findById(userId)
+        .populate({
+          path: "appliJobs",
+          populate: {
+            path: "jobApplyPositionId",
+            model: "Job", 
+          },
+        });
+        console.log("User: ",user);
+      if (!user) {
+        throw new Error("User not found");
+      }
+      return user;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   },
   GetUserByID: async function (id) {
     var user = await userModel.findById(id).populate({
@@ -49,6 +70,34 @@ module.exports = {
       })
       .populate("role");
   },
+  ApplyJob: async function (jobId, userId) {
+    try {
+      console.log(userId)
+      let user = await UserModel.findById(userId);
+      if (!user) {
+        throw new Error('Khong tim thay user');
+      }
+      if(user.status === 'pending' && user.cvFile == "") {
+        throw new Error('Ban chua upload CV');
+      }
+      if (!user.appliJobs) {
+        user.appliJobs = [];
+      }
+      if (!user.appliJobs.includes(jobId)) {
+        user = await userModel.findByIdAndUpdate(
+          userId,
+          {
+            $push: { appliJobs: jobId },
+          },
+          { new: true }
+        );
+      }
+  
+      return user;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
   CreateAnUser: async function (username, password, email, rolename) {
     try {
       let role = await roleModel.findOne({
@@ -75,12 +124,10 @@ module.exports = {
   UpdateAnUser: async function (id, body) {
     try {
       let user = await userModel.findById(id);
-      let allowField = ["password", "email", "urlImg", "role"];
-      for (const key of Object.keys(body)) {
-        if (allowField.includes(key)) {
-          user[key] = body[key];
-        }
+      if (!user) {
+        throw new Error("User not found");
       }
+      user.updateAllowedFields(body);
       return await user.save();
     } catch (error) {
       throw new Error(error.message);
@@ -99,6 +146,7 @@ module.exports = {
     try {
       let user = await userModel.findById(id);
       user.cvFile = url;
+      user.status = 'success';
       return await user.save();
     } catch (error) {
       throw new Error(error.message);

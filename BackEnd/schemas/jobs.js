@@ -21,7 +21,10 @@ const jobSchema = new mongoose.Schema(
       },
       required: true,
     },
-    
+    // Thêm trường ứng viên (applicants)
+    applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+
+
     status: { type: String, enum: ["pending", "approved", "closed"], default: "pending" },
   },
   { timestamps: true }
@@ -39,6 +42,13 @@ jobSchema.methods.updateAllowedFields = function (newData) {
     if (newData[field] !== undefined) {
       this[field] = newData[field];
     }
+  }
+};
+
+jobSchema.methods.applyForJob = async function(userId) {
+  if (!this.applicants.includes(userId)) {
+    this.applicants.push(userId);
+    await this.save();
   }
 };
 

@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var companyController = require("../controllers/companies");
+var jobController = require("../controllers/jobs");
 const { uploadImage } = require("../utils/file");
 let { sendError, sendSuccess } = require("../utils/responseHandler");
 const upload = require("../config/multer");
@@ -17,6 +18,12 @@ router.get("/:id", async function (req, res, next) {
   let id = req.params.id;
   let company = await companyController.GetCompanyById(id);
   sendSuccess(res, company, "Get company successfully", 200);
+});
+router.get("/jobs/:id", async function (req, res, next) {
+  let id = req.params.id;
+  let company = await jobController.GetAllJobsByCompanyId(id);
+  console.log(company);
+  sendSuccess(res, company, "Get all job by company successfully", 200);
 });
 router.put(
   "/:id/:taxCode", check_authentication, check_authorization(constants.COMPANY_PERMISSION),

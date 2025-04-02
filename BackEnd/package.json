@@ -16,6 +16,7 @@
     "express": "~4.16.1",
     "express-session": "^1.18.1",
     "express-validator": "^7.2.1",
+    "handlebars": "^4.7.8",
     "http-errors": "~1.6.3",
     "moongose": "^1.0.0",
     "morgan": "~1.9.1",
@@ -25,6 +26,7 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "pug": "2.0.0-beta11",
+    "puppeteer": "^24.5.0",
     "sendmail": "^1.6.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
