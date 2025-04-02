@@ -1,94 +1,79 @@
-# Tài liệu API Backend
+# Tài liệu API Backend (Với Ví dụ JSON)
 
-Tài liệu này mô tả các API endpoint được cung cấp bởi backend. Frontend có thể sử dụng tài liệu này để hiểu cách tương tác với API.
+### Chạy File .md
+```html
+    ctrl + shift + v
+```
 
-**Lưu ý chung:**
 
-* **Base URL:** Giả sử base URL là `http://your-api-domain.com/api` (Thay thế bằng domain thực tế). Các đường dẫn dưới đây là phần nối tiếp theo sau base URL.
-* **Authentication:** Nhiều endpoint yêu cầu xác thực bằng JWT. Khi gọi các API này, cần gửi kèm header `Authorization: Bearer <your_jwt_token>`. Token này thường được nhận sau khi đăng nhập thành công.
-* **Response Format:**
-    * **Thành công (Success):** Các response thành công thường theo cấu trúc:
-        ```json
-        {
-          "status": "success",
-          "message": "Thông báo thành công",
-          "data": { ... } // Dữ liệu trả về (có thể là object, array, hoặc null)
-        }
-        ```
-        (Dựa trên hàm `sendSuccess` trong code)
-    * **Lỗi (Error):** Các response lỗi thường theo cấu trúc:
-        ```json
-        {
-          "status": "error",
-          "error": {
-              "message": "Thông báo lỗi chi tiết",
-              "type": "LOAI_LOI", // Ví dụ: "SERVER_ERROR", "VALIDATION_ERROR"
-              "code": 500 // HTTP status code
-          }
-        }
-        ```
-        (Dựa trên hàm `sendError` trong code)
+Tài liệu này cung cấp thông tin chi tiết về các API endpoint của hệ thống backend, bao gồm ví dụ dữ liệu JSON đầy đủ.
+
+**Base URL:** `http://127.0.0.1:3000` (Thay thế bằng domain thực tế)
+
+**Authentication:** Nhiều endpoint yêu cầu JWT token trong header `Authorization: Bearer <your_jwt_token>`.
+
+**Định dạng Response Chung:**
+* **Thành công:**
+    ```json
+    {
+      "status": "success",
+      "message": "Thông báo thành công",
+      "data": { ... } // Hoặc [ ... ] hoặc null hoặc string
+    }
+    ```
+* **Lỗi:**
+    ```json
+    {
+      "status": "error",
+      "error": {
+          "message": "Thông báo lỗi",
+          "type": "LOAI_LOI", // Ví dụ: SERVER_ERROR, VALIDATION_ERROR, AUTH_ERROR
+          "code": 500 // HTTP status code (ví dụ: 400, 401, 403, 404, 500)
+      }
+    }
+    ```
 
 ---
 
 ## Authentication (`/auth`)
 
-Các API liên quan đến xác thực người dùng.
+### `GET /auth/google`
+* **Mục đích:** Chuyển hướng đến trang đăng nhập Google.
 
-### 1. Đăng nhập Google
+### `GET /auth/google/callback`
+* **Mục đích:** Xử lý callback từ Google sau khi đăng nhập thành công.
+* **Ví dụ Đầu vào:** Không áp dụng (Google redirect với query params).
+* **Ví dụ Đầu ra:** Redirect HTTP về Frontend (thường kèm token trong URL hoặc cookie).
 
-* **Method:** `GET`
-* **Path:** `/auth/google`
-* **Description:** Chuyển hướng người dùng đến trang đăng nhập của Google để xác thực. (FE thường chỉ cần gọi đến URL này).
-* **Authentication:** Không yêu cầu.
-* **Response:** Chuyển hướng (Redirect) đến trang Google.
-
-### 2. Google Callback
-
-* **Method:** `GET`
-* **Path:** `/auth/google/callback`
-* **Description:** Endpoint mà Google gọi lại sau khi người dùng xác thực thành công. Backend xử lý thông tin và trả về token. (FE thường không gọi trực tiếp, chỉ nhận kết quả sau khi được redirect về từ backend).
-* **Authentication:** Không yêu cầu trực tiếp (Google cung cấp mã).
-* **Response:** Thường là redirect về trang FE kèm theo token hoặc lỗi.
-
-### 3. Đăng nhập thông thường
-
-* **Method:** `POST`
-* **Path:** `/auth/login`
-* **Description:** Đăng nhập bằng username và password.
-* **Authentication:** Không yêu cầu.
-* **Request Body:**
+### `POST /auth/login`
+* **Mục đích:** Đăng nhập bằng tài khoản thông thường.
+* **Ví dụ Đầu vào (Request Body - JSON):**
     ```json
     {
-      "username": "your_username",
-      "password": "your_password"
+      "username": "testuser",
+      "password": "password123"
     }
     ```
-* **Success Response (200):**
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Login successfully",
-      "data": "<jwt_token>" // JWT Token dùng cho các request sau
+      "data": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" // Ví dụ JWT Token
     }
     ```
-* **Error Response (500):** Thông tin đăng nhập sai hoặc lỗi server.
 
-### 4. Đăng ký
-
-* **Method:** `POST`
-* **Path:** `/auth/signup`
-* **Description:** Tạo tài khoản người dùng mới.
-* **Authentication:** Không yêu cầu.
-* **Request Body:**
+### `POST /auth/signup`
+* **Mục đích:** Đăng ký tài khoản mới.
+* **Ví dụ Đầu vào (Request Body - JSON):**
     ```json
     {
-      "username": "new_username",
-      "password": "new_password",
-      "email": "user@example.com"
+      "username": "newuser",
+      "password": "strongPassword!@#",
+      "email": "newemail01@gmail.com"
     }
     ```
-* **Success Response (200):**
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
@@ -96,604 +81,842 @@ Các API liên quan đến xác thực người dùng.
       "data": null
     }
     ```
-* **Error Response:** Lỗi validation (username/email đã tồn tại) hoặc lỗi server.
 
-### 5. Thay đổi mật khẩu
-
-* **Method:** `POST`
-* **Path:** `/auth/changepassword`
-* **Description:** Cho phép người dùng đã đăng nhập thay đổi mật khẩu.
+### `POST /auth/changepassword`
+* **Mục đích:** Thay đổi mật khẩu cho người dùng đã đăng nhập.
 * **Authentication:** Yêu cầu (`Authorization: Bearer <token>`).
-* **Request Body:**
+* **Ví dụ Đầu vào (Request Body - JSON):**
     ```json
     {
       "oldpassword": "current_password",
-      "newpassword": "new_password_chosen"
+      "newpassword": "new_secure_password"
     }
     ```
-* **Success Response (200):**
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Change password successfully",
-      "data": { ... } // Có thể là thông tin user hoặc null
+      "data": {
+         "_id": "ObjectId('605c7d5a3f8b9a1b7c8d9e0f')", // Ví dụ ID User
+         "username": "testuser",
+         "email": "[đã xoá địa chỉ email]"
+         // Có thể có hoặc không có các trường khác tùy vào implementation
+      }
+      // Hoặc data có thể là null tùy implementation
+      // "data": null
     }
     ```
-* **Error Response:** Sai mật khẩu cũ, lỗi server, chưa đăng nhập (401/403).
 
-### 6. Lấy thông tin người dùng hiện tại
-
-* **Method:** `GET`
-* **Path:** `/auth/me`
-* **Description:** Lấy thông tin chi tiết của người dùng đang đăng nhập (dựa trên token).
+### `GET /auth/me`
+* **Mục đích:** Lấy thông tin chi tiết của người dùng đang đăng nhập.
 * **Authentication:** Yêu cầu (`Authorization: Bearer <token>`).
-* **Success Response (200):**
+* **Ví dụ Đầu vào:** Không áp dụng (GET).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Get info user successfully",
       "data": {
-        "_id": "user_id",
-        "username": "user_name",
-        "email": "user@example.com",
-        "role": { ... }, // Chi tiết role
+        "_id": "ObjectId('605c7d5a3f8b9a1b7c8d9e0f')",
+        "username": "testuser",
+        "email": "[đã xoá địa chỉ email]",
+        "avatar": "[http://your-api-domain.com/uploads/avatars/avatar_default.png](https://www.google.com/search?q=http://your-api-domain.com/uploads/avatars/avatar_default.png)",
+        "cv": "[http://your-api-domain.com/uploads/cvs/user_cv.pdf](https://www.google.com/search?q=http://your-api-domain.com/uploads/cvs/user_cv.pdf)",
+        "isActive": true,
+        "company": { // Có thể là null nếu user không thuộc công ty nào
+            "_id": "ObjectId('605c7e1a3f8b9a1b7c8d9e1a')",
+            "name": "Test Company Inc.",
+            "taxCode": "0123456789",
+            "websiteUrl": "[https://company.example.com](https://www.google.com/search?q=https://company.example.com)",
+            "description": "A leading tech company.",
+            "image": "[http://your-api-domain.com/uploads/companies/company_logo.png](https://www.google.com/search?q=http://your-api-domain.com/uploads/companies/company_logo.png)",
+            "address": "123 Tech Street, Silicon Valley"
+            // ... các trường khác của company
+         },
+        "role": {
+            "_id": "ObjectId('605c7f0a3f8b9a1b7c8d9e2b')",
+            "name": "User",
+            "permissions": ["CREATE_JOB", "UPDATE_OWN_JOB", "DELETE_OWN_JOB"] // Ví dụ
+        },
+        "createdAt": "2025-04-01T10:00:00.000Z",
+        "updatedAt": "2025-04-02T11:30:00.000Z"
         // ... các trường khác của user
       }
     }
     ```
-* **Error Response:** Chưa đăng nhập (401/403).
 
-### 7. Quên mật khẩu
-
-* **Method:** `POST`
-* **Path:** `/auth/forgotpassword`
-* **Description:** Gửi yêu cầu reset mật khẩu qua email. Backend sẽ tạo token và gửi link reset.
-* **Authentication:** Không yêu cầu.
-* **Request Body:**
+### `POST /auth/forgotpassword`
+* **Mục đích:** Gửi yêu cầu đặt lại mật khẩu qua email.
+* **Ví dụ Đầu vào (Request Body - JSON):**
     ```json
     {
-      "email": "registered_email@example.com"
+      "email": "[đã xoá địa chỉ email]"
     }
     ```
-* **Success Response (200):**
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Gui mail thanh cong",
       "data": {
-          "url": "http://localhost:3000/auth/reset_password/<reset_token>" // Link reset (có thể không trả về trong production)
+          // URL có thể không được trả về trong môi trường production
+          "url": "http://localhost:3000/auth/reset_password/a1b2c3d4e5f6..."
       }
     }
     ```
-* **Error Response (500):** Email không tồn tại.
 
-### 8. Đặt lại mật khẩu
-
-* **Method:** `POST`
-* **Path:** `/auth/reset_password/:token`
-* **Description:** Đặt lại mật khẩu mới bằng token nhận được qua email.
-* **Authentication:** Không yêu cầu (token dùng để xác thực).
-* **Path Parameters:**
-    * `token`: Token reset mật khẩu nhận được qua email.
-* **Request Body:**
-    ```json
-    {
-      "password": "new_password"
-    }
-    ```
-* **Success Response (200):**
+### `POST /auth/reset_password/:token`
+* **Mục đích:** Đặt lại mật khẩu bằng token nhận được qua email.
+* **Ví dụ Đầu vào:**
+    * Path Parameter: `token` (Ví dụ: `a1b2c3d4e5f6...`)
+    * Request Body (JSON):
+        ```json
+        {
+          "password": "new_reset_password"
+        }
+        ```
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Change password successfully",
-      "data": { ... } // Thông tin user đã cập nhật password
+      "data": {
+         "_id": "ObjectId('605c800a3f8b9a1b7c8d9e3c')", // ID user tương ứng với token
+         "username": "user_forgot",
+         "email": "[đã xoá địa chỉ email]"
+         // ... các trường cần thiết khác
+      }
     }
     ```
-* **Error Response (500):** Token không hợp lệ hoặc đã hết hạn.
 
 ---
 
 ## Companies (`/companies`)
 
-Các API liên quan đến thông tin công ty.
-
-### 1. Lấy danh sách công ty
-
-* **Method:** `GET`
-* **Path:** `/companies`
-* **Description:** Lấy danh sách tất cả công ty.
-* **Authentication:** Không yêu cầu.
-* **Success Response (200):**
+### `GET /companies`
+* **Mục đích:** Lấy danh sách tất cả công ty.
+* **Ví dụ Đầu vào:** Không áp dụng (GET).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Get all companies successfully",
       "data": [
-        { /* Company object 1 */ },
-        { /* Company object 2 */ },
-        // ...
+        {
+          "_id": "ObjectId('605c7e1a3f8b9a1b7c8d9e1a')",
+          "name": "Test Company Inc.",
+          "taxCode": "0123456789",
+          "websiteUrl": "[https://company.example.com](https://www.google.com/search?q=https://company.example.com)",
+          "description": "A leading tech company.",
+          "image": "[http://your-api-domain.com/uploads/companies/company_logo.png](https://www.google.com/search?q=http://your-api-domain.com/uploads/companies/company_logo.png)",
+          "address": "123 Tech Street, Silicon Valley",
+          "user": "ObjectId('605c7d5a3f8b9a1b7c8d9e0f')", // User liên kết (nếu có)
+          "createdAt": "2025-04-01T11:00:00.000Z",
+          "updatedAt": "2025-04-02T10:00:00.000Z"
+        },
+        {
+          "_id": "ObjectId('605c810a3f8b9a1b7c8d9e4d')",
+          "name": "Another Company Ltd.",
+          "taxCode": "9876543210",
+          "websiteUrl": "[https://another.example.com](https://www.google.com/search?q=https://another.example.com)",
+          "description": "Startup in innovation.",
+          "image": "[http://your-api-domain.com/uploads/companies/another_logo.jpg](https://www.google.com/search?q=http://your-api-domain.com/uploads/companies/another_logo.jpg)",
+          "address": "456 Innovation Ave, Tech Park",
+          "user": "ObjectId('605c820a3f8b9a1b7c8d9e5e')",
+          "createdAt": "2025-03-20T09:00:00.000Z",
+          "updatedAt": "2025-04-01T15:00:00.000Z"
+        }
+        // ... Thêm các công ty khác
       ]
     }
     ```
 
-### 2. Lấy chi tiết công ty
-
-* **Method:** `GET`
-* **Path:** `/companies/:id`
-* **Description:** Lấy thông tin chi tiết của một công ty bằng ID.
-* **Authentication:** Không yêu cầu.
-* **Path Parameters:**
-    * `id`: ID của công ty.
-* **Success Response (200):**
+### `GET /companies/:id`
+* **Mục đích:** Lấy thông tin chi tiết của một công ty.
+* **Ví dụ Đầu vào:** Path Parameter `id` (Ví dụ: `605c7e1a3f8b9a1b7c8d9e1a`).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Get company successfully",
-      "data": { /* Company object */ }
+      "data": {
+        "_id": "ObjectId('605c7e1a3f8b9a1b7c8d9e1a')",
+        "name": "Test Company Inc.",
+        "taxCode": "0123456789",
+        "websiteUrl": "[https://company.example.com](https://www.google.com/search?q=https://company.example.com)",
+        "description": "A leading tech company.",
+        "image": "[http://your-api-domain.com/uploads/companies/company_logo.png](https://www.google.com/search?q=http://your-api-domain.com/uploads/companies/company_logo.png)",
+        "address": "123 Tech Street, Silicon Valley",
+        "user": { // Có thể populate thông tin user
+           "_id": "ObjectId('605c7d5a3f8b9a1b7c8d9e0f')",
+           "username": "company_admin_user",
+           "email": "[đã xoá địa chỉ email]"
+        },
+        "createdAt": "2025-04-01T11:00:00.000Z",
+        "updatedAt": "2025-04-02T10:00:00.000Z"
+        // ... các trường khác nếu có
+      }
     }
     ```
 
-### 3. Cập nhật thông tin công ty
-
-* **Method:** `PUT`
-* **Path:** `/companies/:id/:taxCode`
-* **Description:** Cập nhật thông tin công ty. Yêu cầu quyền COMPANY_PERMISSION.
+### `PUT /companies/:id/:taxCode`
+* **Mục đích:** Cập nhật thông tin công ty.
 * **Authentication:** Yêu cầu (`Authorization: Bearer <token>`) + Quyền COMPANY.
-* **Path Parameters:**
-    * `id`: ID của công ty cần cập nhật.
-    * `taxCode`: Mã số thuế của công ty (có vẻ dùng để xác thực thêm).
-* **Request Body:** `multipart/form-data`
-    * `image`: File ảnh logo/hình ảnh công ty (optional).
-    * Các trường thông tin khác của công ty (ví dụ: `name`, `description`, `address`, `websiteUrl`, ... gửi dưới dạng form fields).
-* **Success Response (200):**
+* **Ví dụ Đầu vào:**
+    * Path Parameters: `id` (Ví dụ: `605c7e1a3f8b9a1b7c8d9e1a`), `taxCode` (Ví dụ: `0123456789`).
+    * Request Body (`multipart/form-data`):
+        * `image`: (Optional) File ảnh mới.
+        * `name`: (Optional) "Updated Test Company Name" (form field).
+        * `description`: (Optional) "Updated company description." (form field).
+        * `websiteUrl`: (Optional) "https://updated.example.com" (form field).
+        * `address`: (Optional) "456 New Address, City" (form field).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Update company successfully",
-      "data": { /* Company object đã cập nhật */ }
+      "data": {
+        "_id": "ObjectId('605c7e1a3f8b9a1b7c8d9e1a')",
+        "name": "Updated Test Company Name", // Dữ liệu đã cập nhật
+        "taxCode": "0123456789",
+        "websiteUrl": "[https://updated.example.com](https://updated.example.com)", // Dữ liệu đã cập nhật
+        "description": "Updated company description.", // Dữ liệu đã cập nhật
+        "image": "[http://your-api-domain.com/uploads/companies/new_company_logo.png](https://www.google.com/search?q=http://your-api-domain.com/uploads/companies/new_company_logo.png)", // URL ảnh mới nếu upload
+        "address": "456 New Address, City", // Dữ liệu đã cập nhật
+        "user": "ObjectId('605c7d5a3f8b9a1b7c8d9e0f')",
+        "createdAt": "2025-04-01T11:00:00.000Z",
+        "updatedAt": "2025-04-03T09:15:00.000Z" // Thời gian cập nhật mới
+      }
     }
     ```
-* **Error Response (500, 401, 403):** Lỗi server, không có quyền, chưa đăng nhập.
 
 ---
 
 ## Jobs (`/jobs`)
 
-Các API liên quan đến tin tuyển dụng/công việc.
-
-### 1. Lấy danh sách công việc
-
-* **Method:** `GET`
-* **Path:** `/jobs`
-* **Description:** Lấy danh sách tất cả công việc/tin tuyển dụng.
-* **Authentication:** Không yêu cầu.
-* **Success Response (200):**
+### `GET /jobs`
+* **Mục đích:** Lấy danh sách tất cả công việc.
+* **Ví dụ Đầu vào:** Không áp dụng (GET).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Get all jobs successfully",
       "data": [
-        { /* Job object 1 */ },
-        { /* Job object 2 */ },
-        // ...
+        {
+          "_id": "ObjectId('605c8a0a3f8b9a1b7c8d9f0a')",
+          "title": "Senior Backend Developer",
+          "description": "Develop and maintain server-side logic.",
+          "salary": "3000-5000 USD",
+          "location": "Ho Chi Minh City",
+          "company": { // Populated company info
+            "_id": "ObjectId('605c7e1a3f8b9a1b7c8d9e1a')",
+            "name": "Test Company Inc.",
+            "image": "[http://your-api-domain.com/uploads/companies/company_logo.png](https://www.google.com/search?q=http://your-api-domain.com/uploads/companies/company_logo.png)"
+          },
+          "jobType": { // Populated job type
+             "_id": "ObjectId('605c8c0a3f8b9a1b7c8d9f1b')",
+             "name": "Full-time"
+          },
+          "positionType": { // Populated position type
+             "_id": "ObjectId('605c8d0a3f8b9a1b7c8d9f2c')",
+             "name": "Senior"
+          },
+          "createdBy": "ObjectId('605c7d5a3f8b9a1b7c8d9e0f')", // User ID
+          "status": "Open", // Trạng thái tin tuyển dụng
+          "createdAt": "2025-04-02T14:00:00.000Z",
+          "updatedAt": "2025-04-02T14:00:00.000Z"
+        },
+        {
+          "_id": "ObjectId('605c8b0a3f8b9a1b7c8d9f0b')",
+          "title": "Frontend Intern",
+          "description": "Learn and assist in building user interfaces.",
+          "salary": "Negotiable",
+          "location": "Remote",
+          "company": {
+            "_id": "ObjectId('605c810a3f8b9a1b7c8d9e4d')",
+            "name": "Another Company Ltd.",
+            "image": "[http://your-api-domain.com/uploads/companies/another_logo.jpg](https://www.google.com/search?q=http://your-api-domain.com/uploads/companies/another_logo.jpg)"
+          },
+          "jobType": {
+             "_id": "ObjectId('605c8c1a3f8b9a1b7c8d9f1c')",
+             "name": "Internship"
+          },
+          "positionType": {
+             "_id": "ObjectId('605c8d1a3f8b9a1b7c8d9f2d')",
+             "name": "Intern"
+          },
+          "createdBy": "ObjectId('605c820a3f8b9a1b7c8d9e5e')",
+          "status": "Open",
+          "createdAt": "2025-04-01T16:30:00.000Z",
+          "updatedAt": "2025-04-01T16:30:00.000Z"
+        }
+        // ... Thêm các job khác
       ]
     }
     ```
 
-### 2. Lấy chi tiết công việc
-
-* **Method:** `GET`
-* **Path:** `/jobs/:id`
-* **Description:** Lấy thông tin chi tiết của một công việc bằng ID.
-* **Authentication:** Không yêu cầu.
-* **Path Parameters:**
-    * `id`: ID của công việc.
-* **Success Response (200):**
+### `GET /jobs/:id`
+* **Mục đích:** Lấy thông tin chi tiết của một công việc.
+* **Ví dụ Đầu vào:** Path Parameter `id` (Ví dụ: `605c8a0a3f8b9a1b7c8d9f0a`).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Get job successfully",
-      "data": { /* Job object */ }
+      "data": {
+        "_id": "ObjectId('605c8a0a3f8b9a1b7c8d9f0a')",
+        "title": "Senior Backend Developer",
+        "description": "Develop and maintain server-side logic. Requirements: Node.js, MongoDB, AWS.",
+        "salary": "3000-5000 USD",
+        "location": "Ho Chi Minh City",
+        "company": {
+          "_id": "ObjectId('605c7e1a3f8b9a1b7c8d9e1a')",
+          "name": "Test Company Inc.",
+          "taxCode": "0123456789",
+          "websiteUrl": "[https://company.example.com](https://www.google.com/search?q=https://company.example.com)",
+          "description": "A leading tech company.",
+          "image": "[http://your-api-domain.com/uploads/companies/company_logo.png](https://www.google.com/search?q=http://your-api-domain.com/uploads/companies/company_logo.png)",
+          "address": "123 Tech Street, Silicon Valley"
+          // ... có thể populate thêm thông tin công ty
+        },
+        "jobType": {
+           "_id": "ObjectId('605c8c0a3f8b9a1b7c8d9f1b')",
+           "name": "Full-time"
+        },
+        "positionType": {
+           "_id": "ObjectId('605c8d0a3f8b9a1b7c8d9f2c')",
+           "name": "Senior"
+        },
+        "createdBy": { // Có thể populate thông tin user tạo
+           "_id": "ObjectId('605c7d5a3f8b9a1b7c8d9e0f')",
+           "username": "recruiter_user",
+           "email": "[đã xoá địa chỉ email]"
+        },
+        "status": "Open",
+        "deadline": "2025-05-31T23:59:59.000Z", // Ví dụ hạn nộp
+        "skills": ["Node.js", "MongoDB", "AWS", "REST API"], // Ví dụ skills
+        "createdAt": "2025-04-02T14:00:00.000Z",
+        "updatedAt": "2025-04-03T10:00:00.000Z"
+      }
     }
     ```
 
-### 3. Tạo công việc mới
-
-* **Method:** `POST`
-* **Path:** `/jobs`
-* **Description:** Tạo một tin tuyển dụng/công việc mới. Yêu cầu quyền USER_PERMISSION.
+### `POST /jobs`
+* **Mục đích:** Tạo một công việc mới.
 * **Authentication:** Yêu cầu (`Authorization: Bearer <token>`) + Quyền USER.
-* **Request Body:**
+* **Ví dụ Đầu vào (Request Body - JSON):**
     ```json
     {
-      "title": "Job Title",
-      "description": "Job Description",
-      "salary": "Thỏa thuận",
-      "companyId": "company_id",
-      // ... các trường khác của job
+      "title": "Marketing Specialist",
+      "description": "Plan and execute marketing campaigns.",
+      "salary": "1500 USD",
+      "location": "Hanoi",
+      "companyId": "ObjectId('605c7e1a3f8b9a1b7c8d9e1a')", // ID công ty đăng tuyển
+      "jobTypeId": "ObjectId('605c8c0a3f8b9a1b7c8d9f1b')", // ID loại hình (Full-time)
+      "positionTypeId": "ObjectId('605c8d2a3f8b9a1b7c8d9f2e')", // ID vị trí (Junior)
+      "status": "Open",
+      "deadline": "2025-06-15T23:59:59.000Z",
+      "skills": ["Digital Marketing", "SEO", "Content Creation"]
     }
     ```
-* **Success Response (200):**
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Create job successfully",
-      "data": { /* Job object vừa tạo */ }
+      "data": {
+        "_id": "ObjectId('605c900a3f8b9a1b7c8d9f5a')", // ID của job mới tạo
+        "title": "Marketing Specialist",
+        "description": "Plan and execute marketing campaigns.",
+        "salary": "1500 USD",
+        "location": "Hanoi",
+        "company": "ObjectId('605c7e1a3f8b9a1b7c8d9e1a')", // ID hoặc populated object
+        "jobType": "ObjectId('605c8c0a3f8b9a1b7c8d9f1b')",
+        "positionType": "ObjectId('605c8d2a3f8b9a1b7c8d9f2e')",
+        "createdBy": "ObjectId('current_user_id')", // ID user tạo job (từ token)
+        "status": "Open",
+        "deadline": "2025-06-15T23:59:59.000Z",
+        "skills": ["Digital Marketing", "SEO", "Content Creation"],
+        "createdAt": "2025-04-03T11:00:00.000Z", // Thời gian tạo
+        "updatedAt": "2025-04-03T11:00:00.000Z"
+      }
     }
     ```
-* **Error Response:** Lỗi validation, lỗi server, không có quyền (403), chưa đăng nhập (401).
 
-### 4. Cập nhật công việc
-
-* **Method:** `PUT`
-* **Path:** `/jobs/:id`
-* **Description:** Cập nhật thông tin một công việc. Yêu cầu quyền USER_PERMISSION.
-* **Authentication:** Yêu cầu (`Authorization: Bearer <token>`) + Quyền USER.
-* **Path Parameters:**
-    * `id`: ID của công việc cần cập nhật.
-* **Request Body:**
-    ```json
-    {
-      // Các trường cần cập nhật
-      "title": "Updated Job Title",
-      "description": "Updated Description",
-      // ...
-    }
-    ```
-* **Success Response (200):**
+### `PUT /jobs/:id`
+* **Mục đích:** Cập nhật thông tin công việc.
+* **Authentication:** Yêu cầu (`Authorization: Bearer <token>`) + Quyền USER (chỉ chủ job hoặc Admin).
+* **Ví dụ Đầu vào:**
+    * Path Parameter: `id` (Ví dụ: `605c900a3f8b9a1b7c8d9f5a`).
+    * Request Body (JSON) - chỉ chứa các trường cần cập nhật:
+        ```json
+        {
+          "salary": "1600 USD",
+          "status": "Closed", // Ví dụ: Đóng tin tuyển dụng
+          "description": "Plan and execute marketing campaigns. Update: Focus on social media.",
+          "skills": ["Digital Marketing", "SEO", "Content Creation", "Social Media Ads"]
+        }
+        ```
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
-      "message": "Update job successfully", // Message trong code ghi là "Create..." -> nên sửa lại
-      "data": { /* Job object đã cập nhật */ }
+      "message": "Update job successfully", // Message trong code có thể là "Create...", nên sửa lại
+      "data": {
+        "_id": "ObjectId('605c900a3f8b9a1b7c8d9f5a')",
+        "title": "Marketing Specialist", // Không đổi
+        "description": "Plan and execute marketing campaigns. Update: Focus on social media.", // Cập nhật
+        "salary": "1600 USD", // Cập nhật
+        "location": "Hanoi", // Không đổi
+        "company": "ObjectId('605c7e1a3f8b9a1b7c8d9e1a')",
+        "jobType": "ObjectId('605c8c0a3f8b9a1b7c8d9f1b')",
+        "positionType": "ObjectId('605c8d2a3f8b9a1b7c8d9f2e')",
+        "createdBy": "ObjectId('current_user_id')",
+        "status": "Closed", // Cập nhật
+        "deadline": "2025-06-15T23:59:59.000Z", // Không đổi
+        "skills": ["Digital Marketing", "SEO", "Content Creation", "Social Media Ads"], // Cập nhật
+        "createdAt": "2025-04-03T11:00:00.000Z",
+        "updatedAt": "2025-04-03T11:30:00.000Z" // Thời gian cập nhật mới
+      }
     }
     ```
-* **Error Response:** Lỗi validation, lỗi server, không có quyền (403), chưa đăng nhập (401).
 
-### 5. Xóa công việc
-
-* **Method:** `DELETE`
-* **Path:** `/jobs/:id`
-* **Description:** Xóa một công việc. Yêu cầu quyền USER_PERMISSION.
-* **Authentication:** Yêu cầu (`Authorization: Bearer <token>`) + Quyền USER.
-* **Path Parameters:**
-    * `id`: ID của công việc cần xóa.
-* **Success Response (200):**
+### `DELETE /jobs/:id`
+* **Mục đích:** Xóa một công việc.
+* **Authentication:** Yêu cầu (`Authorization: Bearer <token>`) + Quyền USER (chỉ chủ job hoặc Admin).
+* **Ví dụ Đầu vào:** Path Parameter `id` (Ví dụ: `605c900a3f8b9a1b7c8d9f5a`).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Delete job successfully",
-      "data": { /* Job object đã xóa */ } // Hoặc có thể là null
+      "data": {
+        // Trả về object đã xóa
+        "_id": "ObjectId('605c900a3f8b9a1b7c8d9f5a')",
+        "title": "Marketing Specialist",
+        // ... các trường khác của job đã xóa
+      }
+      // Hoặc data có thể là null tùy implementation
+      // "data": null
     }
     ```
-* **Error Response:** Lỗi server, không có quyền (403), chưa đăng nhập (401).
 
 ---
 
 ## Job Types (`/jobTypes`)
 
-Các API quản lý loại hình công việc.
-
-### 1. Lấy danh sách loại hình công việc
-
-* **Method:** `GET`
-* **Path:** `/jobTypes`
-* **Description:** Lấy danh sách tất cả các loại hình công việc.
-* **Authentication:** Không yêu cầu.
-* **Success Response (200):**
+### `GET /jobTypes`
+* **Mục đích:** Lấy danh sách các loại hình công việc.
+* **Ví dụ Đầu vào:** Không áp dụng (GET).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Get all job types successfully",
       "data": [
-        { "_id": "...", "name": "Full-time" },
-        { "_id": "...", "name": "Part-time" },
+        { "_id": "ObjectId('605c8c0a3f8b9a1b7c8d9f1b')", "name": "Full-time" },
+        { "_id": "ObjectId('605c9a0a3f8b9a1b7c8d9f6b')", "name": "Part-time" },
+        { "_id": "ObjectId('605c8c1a3f8b9a1b7c8d9f1c')", "name": "Internship" },
+        { "_id": "ObjectId('605c9a1a3f8b9a1b7c8d9f6c')", "name": "Contract" },
+        { "_id": "ObjectId('605c9a2a3f8b9a1b7c8d9f6d')", "name": "Remote" }
         // ...
       ]
     }
     ```
 
-### 2. Lấy chi tiết loại hình công việc
-
-* **Method:** `GET`
-* **Path:** `/jobTypes/:id`
-* **Description:** Lấy thông tin chi tiết của một loại hình công việc bằng ID.
-* **Authentication:** Không yêu cầu.
-* **Path Parameters:**
-    * `id`: ID của loại hình công việc.
-* **Success Response (200):**
+### `GET /jobTypes/:id`
+* **Mục đích:** Lấy chi tiết một loại hình công việc.
+* **Ví dụ Đầu vào:** Path Parameter `id` (Ví dụ: `605c8c0a3f8b9a1b7c8d9f1b`).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
-      "message": "Get job type successfully", // Sửa message cho khớp
-      "data": { "_id": "...", "name": "..." }
+      "message": "Get job type successfully", // Nên sửa message trong code
+      "data": {
+        "_id": "ObjectId('605c8c0a3f8b9a1b7c8d9f1b')",
+        "name": "Full-time",
+        "description": "Standard full-time employment.", // Ví dụ có thêm description
+        "createdAt": "2025-04-01T00:00:00.000Z",
+        "updatedAt": "2025-04-01T00:00:00.000Z"
+      }
     }
     ```
 
-### 3. Tạo loại hình công việc mới
-
-* **Method:** `POST`
-* **Path:** `/jobTypes`
-* **Description:** Tạo một loại hình công việc mới.
-* **Authentication:** Không yêu cầu (Dựa trên code không có middleware check_auth).
-* **Request Body:**
+### `POST /jobTypes`
+* **Mục đích:** Tạo loại hình công việc mới.
+* **Authentication:** Không yêu cầu (theo code hiện tại - *Nên cân nhắc thêm quyền Admin*).
+* **Ví dụ Đầu vào (Request Body - JSON):**
     ```json
     {
-      "name": "New Job Type Name" // Ví dụ: "Remote"
+      "name": "Freelance",
+      "description": "Project-based independent work." // Ví dụ
     }
     ```
-* **Success Response (200):**
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Create job type successfully",
-      "data": { "_id": "...", "name": "New Job Type Name" }
+      "data": {
+        "_id": "ObjectId('605c9b0a3f8b9a1b7c8d9f7e')", // ID mới tạo
+        "name": "Freelance",
+        "description": "Project-based independent work.",
+        "createdAt": "2025-04-03T12:00:00.000Z",
+        "updatedAt": "2025-04-03T12:00:00.000Z"
+      }
     }
     ```
-* **Error Response:** Lỗi validation (tên trùng), lỗi server.
 
 ---
 
 ## Position Types (`/positionTypes`)
 
-Các API quản lý loại vị trí công việc (ví dụ: Intern, Junior, Senior).
-
-### 1. Lấy danh sách loại vị trí
-
-* **Method:** `GET`
-* **Path:** `/positionTypes`
-* **Description:** Lấy danh sách tất cả các loại vị trí công việc.
-* **Authentication:** Không yêu cầu.
-* **Success Response (200):**
+### `GET /positionTypes`
+* **Mục đích:** Lấy danh sách các loại vị trí công việc.
+* **Ví dụ Đầu vào:** Không áp dụng (GET).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Get all position types successfully",
       "data": [
-        { "_id": "...", "name": "Intern" },
-        { "_id": "...", "name": "Junior" },
+        { "_id": "ObjectId('605c8d1a3f8b9a1b7c8d9f2d')", "name": "Intern" },
+        { "_id": "ObjectId('605c8d2a3f8b9a1b7c8d9f2e')", "name": "Junior" },
+        { "_id": "ObjectId('605c9c0a3f8b9a1b7c8d9f8f')", "name": "Mid-level" },
+        { "_id": "ObjectId('605c8d0a3f8b9a1b7c8d9f2c')", "name": "Senior" },
+        { "_id": "ObjectId('605c9c1a3f8b9a1b7c8d9f90')", "name": "Lead" },
+        { "_id": "ObjectId('605c9c2a3f8b9a1b7c8d9f91')", "name": "Manager" }
         // ...
       ]
     }
     ```
 
-### 2. Lấy chi tiết loại vị trí
-
-* **Method:** `GET`
-* **Path:** `/positionTypes/:id`
-* **Description:** Lấy thông tin chi tiết của một loại vị trí bằng ID.
-* **Authentication:** Không yêu cầu.
-* **Path Parameters:**
-    * `id`: ID của loại vị trí.
-* **Success Response (200):**
+### `GET /positionTypes/:id`
+* **Mục đích:** Lấy chi tiết một loại vị trí công việc.
+* **Ví dụ Đầu vào:** Path Parameter `id` (Ví dụ: `605c8d0a3f8b9a1b7c8d9f2c`).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
-      "message": "Get position type successfully", // Sửa message cho khớp
-      "data": { "_id": "...", "name": "..." }
+      "message": "Get position type successfully", // Nên sửa message trong code
+      "data": {
+        "_id": "ObjectId('605c8d0a3f8b9a1b7c8d9f2c')",
+        "name": "Senior",
+        "level": 4, // Ví dụ có thêm level
+        "createdAt": "2025-04-01T00:10:00.000Z",
+        "updatedAt": "2025-04-01T00:10:00.000Z"
+      }
     }
     ```
 
-### 3. Tạo loại vị trí mới
-
-* **Method:** `POST`
-* **Path:** `/positionTypes`
-* **Description:** Tạo một loại vị trí công việc mới.
-* **Authentication:** Không yêu cầu (Dựa trên code không có middleware check_auth).
-* **Request Body:**
+### `POST /positionTypes`
+* **Mục đích:** Tạo loại vị trí công việc mới.
+* **Authentication:** Không yêu cầu (theo code hiện tại - *Nên cân nhắc thêm quyền Admin*).
+* **Ví dụ Đầu vào (Request Body - JSON):**
     ```json
     {
-      "name": "New Position Type Name" // Ví dụ: "Lead"
+      "name": "Director",
+      "level": 6 // Ví dụ
     }
     ```
-* **Success Response (200):**
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Create position type successfully",
-      "data": { "_id": "...", "name": "New Position Type Name" }
+      "data": {
+        "_id": "ObjectId('605c9d0a3f8b9a1b7c8d9fa2')", // ID mới tạo
+        "name": "Director",
+        "level": 6,
+        "createdAt": "2025-04-03T12:10:00.000Z",
+        "updatedAt": "2025-04-03T12:10:00.000Z"
+      }
     }
     ```
-* **Error Response:** Lỗi validation (tên trùng), lỗi server.
 
 ---
 
 ## Roles (`/roles`)
 
-Các API quản lý vai trò người dùng (User, Admin, Company).
-
-### 1. Lấy danh sách vai trò
-
-* **Method:** `GET`
-* **Path:** `/roles`
-* **Description:** Lấy danh sách tất cả các vai trò người dùng.
-* **Authentication:** Không yêu cầu.
-* **Success Response (200):**
+### `GET /roles`
+* **Mục đích:** Lấy danh sách các vai trò người dùng.
+* **Ví dụ Đầu vào:** Không áp dụng (GET).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Get all roles successfully",
       "data": [
-        { "_id": "...", "name": "Admin" },
-        { "_id": "...", "name": "User" },
+        {
+           "_id": "ObjectId('605c7f0a3f8b9a1b7c8d9e2b')",
+           "name": "User",
+           "permissions": ["READ_JOBS", "APPLY_JOB", "UPDATE_OWN_PROFILE", "CREATE_JOB", "UPDATE_OWN_JOB", "DELETE_OWN_JOB"]
+        },
+        {
+           "_id": "ObjectId('605ca00a3f8b9a1b7c8d9fb3')",
+           "name": "Company",
+           "permissions": ["READ_JOBS", "UPDATE_COMPANY_PROFILE", "MANAGE_COMPANY_JOBS"]
+        },
+        {
+           "_id": "ObjectId('605ca01a3f8b9a1b7c8d9fb4')",
+           "name": "Admin",
+           "permissions": ["MANAGE_USERS", "MANAGE_ROLES", "MANAGE_JOBS", "MANAGE_COMPANIES", "MANAGE_JOB_TYPES", "MANAGE_POSITION_TYPES"]
+        }
         // ...
       ]
     }
     ```
 
-### 2. Tạo vai trò mới
-
-* **Method:** `POST`
-* **Path:** `/roles`
-* **Description:** Tạo một vai trò người dùng mới.
-* **Authentication:** Không yêu cầu (Dựa trên code không có middleware check_auth). *Lưu ý: API này nên được bảo vệ chỉ cho Admin.*
-* **Request Body:**
+### `POST /roles`
+* **Mục đích:** Tạo vai trò người dùng mới.
+* **Authentication:** Không yêu cầu (theo code hiện tại - *Lưu ý: API này CỰC KỲ NÊN được bảo vệ chỉ cho Admin*).
+* **Ví dụ Đầu vào (Request Body - JSON):**
     ```json
     {
-      "name": "New Role Name" // Ví dụ: "Moderator"
+      "name": "Moderator",
+      "permissions": ["APPROVE_JOBS", "FLAG_CONTENT", "READ_USERS"] // Ví dụ danh sách quyền
     }
     ```
-* **Success Response (200):**
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Create role successfully",
-      "data": { "_id": "...", "name": "New Role Name" }
+      "data": {
+        "_id": "ObjectId('605ca10a3f8b9a1b7c8d9fc5')", // ID mới tạo
+        "name": "Moderator",
+        "permissions": ["APPROVE_JOBS", "FLAG_CONTENT", "READ_USERS"],
+        "createdAt": "2025-04-03T12:20:00.000Z",
+        "updatedAt": "2025-04-03T12:20:00.000Z"
+      }
     }
     ```
-* **Error Response:** Lỗi validation (tên trùng), lỗi server.
 
 ---
 
 ## Users (`/users`)
 
-Các API quản lý người dùng.
-
-### 1. Lấy danh sách người dùng (Admin)
-
-* **Method:** `GET`
-* **Path:** `/users`
-* **Description:** Lấy danh sách tất cả người dùng. Chỉ dành cho Admin.
+### `GET /users`
+* **Mục đích:** Lấy danh sách tất cả người dùng (chỉ Admin).
 * **Authentication:** Yêu cầu (`Authorization: Bearer <token>`) + Quyền ADMIN.
-* **Success Response (200):**
+* **Ví dụ Đầu vào:** Không áp dụng (GET).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
+      // Message trong code là "Get info user successfully", nên sửa thành "Get all users..."
       "message": "Get info user successfully",
       "data": [
-        { /* User object 1 */ },
-        { /* User object 2 */ },
-        // ...
+        {
+          "_id": "ObjectId('605c7d5a3f8b9a1b7c8d9e0f')",
+          "username": "testuser",
+          "email": "[đã xoá địa chỉ email]",
+          "avatar": "[http://your-api-domain.com/uploads/avatars/avatar_default.png](https://www.google.com/search?q=http://your-api-domain.com/uploads/avatars/avatar_default.png)",
+          "isActive": true,
+          "role": { // Populated role
+             "_id": "ObjectId('605c7f0a3f8b9a1b7c8d9e2b')",
+             "name": "User"
+          },
+          "company": null, // User này không thuộc công ty nào
+          "createdAt": "2025-04-01T10:00:00.000Z",
+          "updatedAt": "2025-04-02T11:30:00.000Z"
+        },
+        {
+          "_id": "ObjectId('605c820a3f8b9a1b7c8d9e5e')",
+          "username": "company_user",
+          "email": "[đã xoá địa chỉ email]",
+          "avatar": null,
+          "isActive": true,
+           "role": {
+             "_id": "ObjectId('605ca00a3f8b9a1b7c8d9fb3')",
+             "name": "Company"
+          },
+          "company": { // Populated company
+            "_id": "ObjectId('605c810a3f8b9a1b7c8d9e4d')",
+            "name": "Another Company Ltd."
+          },
+          "createdAt": "2025-03-20T09:00:00.000Z",
+          "updatedAt": "2025-04-01T15:00:00.000Z"
+        },
+        {
+          "_id": "ObjectId('admin_user_id')",
+          "username": "admin",
+          "email": "[đã xoá địa chỉ email]",
+          "avatar": null,
+          "isActive": true,
+          "role": {
+             "_id": "ObjectId('605ca01a3f8b9a1b7c8d9fb4')",
+             "name": "Admin"
+          },
+          "company": null,
+          "createdAt": "2025-01-01T00:00:00.000Z",
+          "updatedAt": "2025-01-01T00:00:00.000Z"
+        }
+        // ... Thêm users khác
       ]
     }
     ```
-* **Error Response (500, 401, 403):** Lỗi server, không có quyền, chưa đăng nhập.
 
-### 2. Tạo người dùng mới (Admin/Authenticated User?)
-
-* **Method:** `POST`
-* **Path:** `/users`
-* **Description:** Tạo người dùng mới với vai trò cụ thể. Yêu cầu đăng nhập. *Lưu ý: Middleware chỉ check_authentication, có thể cần thêm check_authorization nếu chỉ Admin được tạo user.*
-* **Authentication:** Yêu cầu (`Authorization: Bearer <token>`).
-* **Request Body:**
+### `POST /users`
+* **Mục đích:** Tạo người dùng mới.
+* **Authentication:** Yêu cầu (`Authorization: Bearer <token>`) (*Lưu ý: Nên có thêm check quyền Admin*).
+* **Ví dụ Đầu vào (Request Body - JSON):**
     ```json
     {
-      "username": "another_username",
-      "password": "user_password",
-      "email": "another@example.com",
-      "role": "RoleName or RoleID" // Ví dụ: "User", "Company"
+      "username": "new_employee",
+      "password": "employeePass1!",
+      "email": "[đã xoá địa chỉ email]",
+      "role": "ObjectId('605c7f0a3f8b9a1b7c8d9e2b')", // ID của Role "User"
+      // "role": "User" // Hoặc tên Role tùy implementation
+      "isActive": true // Optional, default có thể là true/false
     }
     ```
-* **Success Response (200):**
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Create user successfully",
-      "data": { /* User object vừa tạo */ }
+      "data": {
+        "_id": "ObjectId('605ca20a3f8b9a1b7c8d9fd6')", // ID user mới
+        "username": "new_employee",
+        "email": "[đã xoá địa chỉ email]",
+        "avatar": null, // Default avatar hoặc null
+        "cv": null,
+        "isActive": true,
+        "company": null, // Chưa gán công ty
+        "role": "ObjectId('605c7f0a3f8b9a1b7c8d9e2b')", // ID Role đã gán
+        // Password hash không được trả về
+        "createdAt": "2025-04-03T12:30:00.000Z",
+        "updatedAt": "2025-04-03T12:30:00.000Z"
+      }
     }
     ```
-* **Error Response (500, 401):** Lỗi validation, lỗi server, chưa đăng nhập.
 
-### 3. Cập nhật người dùng
-
-* **Method:** `PUT`
-* **Path:** `/users/:id`
-* **Description:** Cập nhật thông tin người dùng bằng ID. *Lưu ý: API này không có middleware xác thực trong code, có thể là lỗi bảo mật. Cần kiểm tra lại.*
-* **Authentication:** **KHÔNG CÓ** (Cần xem xét bổ sung).
-* **Path Parameters:**
-    * `id`: ID của người dùng cần cập nhật.
-* **Request Body:**
-    ```json
-    {
-      // Các trường cần cập nhật, ví dụ:
-      "email": "updated_email@example.com",
-      "isActive": true
-      // ... không nên cho phép cập nhật password ở đây
-    }
-    ```
-* **Success Response (200):**
+### `PUT /users/:id`
+* **Mục đích:** Cập nhật thông tin người dùng.
+* **Authentication:** **KHÔNG CÓ** (theo code hiện tại - *Lưu ý: RỦI RO BẢO MẬT NGHIÊM TRỌNG. Cần bổ sung check quyền Admin hoặc chủ sở hữu profile*).
+* **Ví dụ Đầu vào:**
+    * Path Parameter: `id` (Ví dụ: `605ca20a3f8b9a1b7c8d9fd6`).
+    * Request Body (JSON) - chỉ chứa các trường cần cập nhật:
+        ```json
+        {
+          "email": "[đã xoá địa chỉ email]",
+          "isActive": false, // Ví dụ: Khóa tài khoản
+          "role": "ObjectId('605ca00a3f8b9a1b7c8d9fb3')", // Ví dụ: đổi Role thành "Company"
+          "company": "ObjectId('605c7e1a3f8b9a1b7c8d9e1a')" // Ví dụ: gán vào công ty
+        }
+        ```
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Update user successfully",
-      "data": { /* User object đã cập nhật */ }
+      "data": {
+        "_id": "ObjectId('605ca20a3f8b9a1b7c8d9fd6')",
+        "username": "new_employee", // Username thường không đổi ở đây
+        "email": "[đã xoá địa chỉ email]", // Cập nhật
+        "avatar": null,
+        "cv": null,
+        "isActive": false, // Cập nhật
+        "company": "ObjectId('605c7e1a3f8b9a1b7c8d9e1a')", // Cập nhật
+        "role": "ObjectId('605ca00a3f8b9a1b7c8d9fb3')", // Cập nhật
+        "createdAt": "2025-04-03T12:30:00.000Z",
+        "updatedAt": "2025-04-03T12:45:00.000Z" // Thời gian cập nhật mới
+      }
     }
     ```
-* **Error Response (500):** Lỗi server.
 
-### 4. Tạo/Cập nhật thông tin công ty cho User
-
-* **Method:** `POST`
-* **Path:** `/users/upCompanies/:taxCode`
-* **Description:** Cho phép người dùng đã đăng nhập tạo hoặc cập nhật hồ sơ công ty liên kết với tài khoản của họ.
+### `POST /users/upCompanies/:taxCode`
+* **Mục đích:** Tạo hoặc cập nhật hồ sơ công ty liên kết với tài khoản người dùng đang đăng nhập.
 * **Authentication:** Yêu cầu (`Authorization: Bearer <token>`).
-* **Path Parameters:**
-    * `taxCode`: Mã số thuế của công ty.
-* **Request Body:** `multipart/form-data`
-    * `image`: File ảnh (bắt buộc).
-    * `description`: Mô tả công ty (bắt buộc, form field).
-    * `websiteUrl`: URL website công ty (bắt buộc, form field).
-    * Các trường thông tin khác của công ty (nếu có, form fields).
-* **Success Response (200):**
+* **Ví dụ Đầu vào:**
+    * Path Parameter: `taxCode` (Ví dụ: `1122334455`).
+    * Request Body (`multipart/form-data`):
+        * `image`: File ảnh logo công ty (bắt buộc).
+        * `description`: "Mô tả chi tiết về công ty mới này." (form field, bắt buộc).
+        * `websiteUrl`: "https://my-new-company.com" (form field, bắt buộc).
+        * `name`: "My New Company LLC" (form field, thường sẽ lấy từ MST nhưng có thể cho phép sửa đổi).
+        * `address`: "789 Business Rd, Suite 100" (form field, optional).
+* **Ví dụ Đầu ra (Success Response - Tạo mới):**
     ```json
     {
       "status": "success",
-      "message": "Update company successfully", // Hoặc "Create company successfully"
-      "data": { /* Company object đã tạo/cập nhật */ }
+      "message": "Create company successfully", // Hoặc "Update..." nếu đã tồn tại
+      "data": {
+        "_id": "ObjectId('605ca30a3f8b9a1b7c8d9fe7')", // ID công ty mới tạo/cập nhật
+        "name": "My New Company LLC",
+        "taxCode": "1122334455",
+        "websiteUrl": "[https://my-new-company.com](https://my-new-company.com)",
+        "description": "Mô tả chi tiết về công ty mới này.",
+        "image": "[http://your-api-domain.com/uploads/companies/1122334455_logo.jpg](https://www.google.com/search?q=http://your-api-domain.com/uploads/companies/1122334455_logo.jpg)", // URL ảnh đã upload
+        "address": "789 Business Rd, Suite 100",
+        "user": "ObjectId('current_user_id')", // ID user thực hiện request (từ token)
+        "createdAt": "2025-04-03T13:00:00.000Z",
+        "updatedAt": "2025-04-03T13:00:00.000Z"
+      }
     }
     ```
-* **Error Response (500, 401):** Thiếu thông tin bắt buộc, lỗi server, chưa đăng nhập.
+    *Lưu ý:* Backend cũng cần cập nhật trường `company` trong document của User thực hiện request.
 
-### 5. Upload Avatar
-
-* **Method:** `POST`
-* **Path:** `/users/uploadAvatar`
-* **Description:** Cho phép người dùng đã đăng nhập tải lên ảnh đại diện. Yêu cầu quyền USER_PERMISSION.
+### `POST /users/uploadAvatar`
+* **Mục đích:** Tải lên ảnh đại diện cho người dùng đang đăng nhập.
 * **Authentication:** Yêu cầu (`Authorization: Bearer <token>`) + Quyền USER.
-* **Request Body:** `multipart/form-data`
-    * `avatar`: File ảnh đại diện (bắt buộc).
-* **Success Response (200):**
+* **Ví dụ Đầu vào:** Request Body (`multipart/form-data`):
+    * `avatar`: File ảnh (ví dụ: `my_avatar.jpg`, bắt buộc).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Update avatar user successfully",
-      "data": { /* User object đã cập nhật avatar */ }
+      "data": {
+        "_id": "ObjectId('current_user_id')",
+        "username": "user_uploading",
+        "email": "user@example.com",
+        "avatar": "[http://your-api-domain.com/uploads/avatars/current_user_id_avatar.jpg](https://www.google.com/search?q=http://your-api-domain.com/uploads/avatars/current_user_id_avatar.jpg)", // URL avatar mới
+        "cv": "[http://your-api-domain.com/uploads/cvs/user_cv.pdf](https://www.google.com/search?q=http://your-api-domain.com/uploads/cvs/user_cv.pdf)", // CV cũ (nếu có)
+        "isActive": true,
+        "company": { ... }, // Thông tin công ty (nếu có)
+        "role": { ... }, // Thông tin role
+        "createdAt": "...",
+        "updatedAt": "2025-04-03T13:15:00.000Z" // Thời gian cập nhật mới
+      }
     }
     ```
-* **Error Response (500, 401, 403):** Không có file, lỗi server, chưa đăng nhập, không có quyền.
 
-### 6. Upload CV
-
-* **Method:** `POST`
-* **Path:** `/users/uploadCV`
-* **Description:** Cho phép người dùng tải lên file CV. *Lưu ý: Middleware xác thực đang bị comment trong code.*
-* **Authentication:** Yêu cầu (`Authorization: Bearer <token>`) (Khi middleware được bật lại).
-* **Request Body:** `multipart/form-data`
-    * `CV`: File CV (pdf, docx,...) (bắt buộc).
-* **Success Response (200):**
+### `POST /users/uploadCV`
+* **Mục đích:** Tải lên file CV cho người dùng đang đăng nhập.
+* **Authentication:** Yêu cầu (`Authorization: Bearer <token>`) (*Lưu ý: Middleware đang bị comment trong code gốc, cần được bật lại*).
+* **Ví dụ Đầu vào:** Request Body (`multipart/form-data`):
+    * `CV`: File CV (ví dụ: `MyResume_2025.pdf`, bắt buộc).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Update avatar user successfully", // Message nên sửa thành "Update CV..."
-      "data": "<url_cv>" // URL của file CV đã upload
+      "data": "[http://your-api-domain.com/uploads/cvs/current_user_id_cv_2025.pdf](https://www.google.com/search?q=http://your-api-domain.com/uploads/cvs/current_user_id_cv_2025.pdf)" // URL của file CV mới upload
     }
     ```
-* **Error Response (500, 401, 403):** Không có file, lỗi server, chưa đăng nhập (khi bật lại auth).
+    *Lưu ý:* Backend cũng cần cập nhật trường `cv` trong document của User.
 
-### 7. Xóa người dùng
-
-* **Method:** `DELETE`
-* **Path:** `/users/:id`
-* **Description:** Xóa người dùng bằng ID. *Lưu ý: API này không có middleware xác thực trong code, có thể là lỗi bảo mật. Cần kiểm tra lại và chỉ cho phép Admin thực hiện.*
-* **Authentication:** **KHÔNG CÓ** (Cần xem xét bổ sung).
-* **Path Parameters:**
-    * `id`: ID của người dùng cần xóa.
-* **Success Response (200):**
+### `DELETE /users/:id`
+* **Mục đích:** Xóa người dùng.
+* **Authentication:** **KHÔNG CÓ** (theo code hiện tại - *Lưu ý: RỦI RO BẢO MẬT NGHIÊM TRỌNG. Cần bổ sung check quyền Admin*).
+* **Ví dụ Đầu vào:** Path Parameter `id` (Ví dụ: `605ca20a3f8b9a1b7c8d9fd6`).
+* **Ví dụ Đầu ra (Success Response):**
     ```json
     {
       "status": "success",
       "message": "Delete user successfully",
-      "data": { /* User object đã xóa */ } // Hoặc có thể là null
+      "data": {
+        // Thông tin user vừa bị xóa
+        "_id": "ObjectId('605ca20a3f8b9a1b7c8d9fd6')",
+        "username": "new_employee",
+        "email": "[đã xoá địa chỉ email]",
+        // ... các trường khác
+      }
+      // Hoặc data có thể là null
+      // "data": null
     }
     ```
-* **Error Response:** Lỗi server.
