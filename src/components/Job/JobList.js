@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { geAllJobs } from "../../services/JobService";
+import { getAllJobs } from "../../services/JobService";
 import mockJobs from "../../mockData/mockJobs";
 import { Badge, Button, Card, Col, Row } from "react-bootstrap";
 import JobDetail from "./JobDetail";
@@ -8,7 +8,14 @@ function JobList() {
     var [jobs, setJobs] = useState([])
     var [selectedJob, setSelectedJob] = useState(null);
     var getJobs = async () => {
-        setJobs(mockJobs);
+        try {
+
+            var response = await getAllJobs();
+            setJobs(response.data);
+        }
+        catch (error) {
+            console.log(error)
+        }
     }
     useEffect(() => {
         getJobs()
@@ -23,7 +30,7 @@ function JobList() {
                             <Card style={{ width: '100%' }}>
                                 <Card.Body>
                                     <Card.Title>{job.title}</Card.Title>
-                                    <Card.Subtitle className="mb-2 text-muted">{job.companyId}</Card.Subtitle>
+                                    <Card.Subtitle className="mb-2 text-muted">{job.companyId.companyName}</Card.Subtitle>
                                     <Card.Subtitle className="mb-2 text-muted">{job.location}</Card.Subtitle>
                                     {Object.keys(job.salary).length > 0 && (
                                         job.salary.negotiable ? (
@@ -50,7 +57,7 @@ function JobList() {
                     style={{ position: 'sticky', top: '20px', height: 'calc(100vh - 20px)', overflowY: 'auto' }}>
                     {
                         selectedJob ? (
-                            <JobDetail job={selectedJob} />
+                            <JobDetail jobId={selectedJob._id} />
                         ) : (
                             <Card className="text-center p-4">
                                 <Card.Body>

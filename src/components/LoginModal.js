@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { jwtDecode } from "jwt-decode";
 import { toast } from 'react-toastify';
 import { login } from '../services/UserService';
+import { Link, useNavigate } from 'react-router-dom';
 
 function LoginModal(props) {
     const { show, handleClose } = props;
@@ -12,6 +13,7 @@ function LoginModal(props) {
         username: "",
         password: ""
     });
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -43,6 +45,7 @@ function LoginModal(props) {
             const decoded = jwtDecode(token);
             toast.success("Đăng nhập thành công")
             console.log("Đăng nhập thành công:", decoded);
+            navigate('/');
 
         } catch (error) {
             console.error("Lỗi đăng nhập:", error.response?.data || error.message);
@@ -50,6 +53,16 @@ function LoginModal(props) {
         }
 
     };
+    const resetForm = () => {
+        setFormData({
+            username: "",
+            password: ""
+        });
+    };
+    useEffect(() => {
+        if (!show)
+            resetForm()
+    }, [show])
     return (
         <>
             <Modal show={show} onHide={handleClose}>

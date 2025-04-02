@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import { signUp } from '../services/UserService';
+import { signup } from '../services/UserService';
 import { toast } from 'react-toastify';
+import { useEffect } from 'react';
 
 function RegisterModal(props) {
     const { show, handleClose } = props;
@@ -21,7 +22,7 @@ function RegisterModal(props) {
 
         try {
             console.log(formData)
-            const response = await signUp(formData);
+            const response = await signup(formData);
             toast.success("Đăng kí thành công")
             console.log("Đăng kí thành công:", response.data);
         } catch (error) {
@@ -30,6 +31,17 @@ function RegisterModal(props) {
         }
 
     };
+    const resetForm = () => {
+        setFormData({
+            email: "",
+            username: "",
+            password: ""
+        });
+    };
+    useEffect(() => {
+        if (!show)
+            resetForm()
+    }, [show])
     return (
         <>
             <Modal show={show} onHide={handleClose}>

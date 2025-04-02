@@ -1,9 +1,8 @@
-import React from 'react';
-// Keep other imports the same
+import React, { useEffect, useState } from 'react';
 import { Card, Badge, Stack, Button } from "react-bootstrap";
 import { FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaDollarSign, FaRegListAlt, FaRegFileAlt, FaCheckSquare, FaExternalLinkAlt, FaBookmark } from "react-icons/fa";
+import { getJobById } from '../../services/JobService';
 
-// renderListItems helper function remains the same
 const renderListItems = (items) => {
     if (!Array.isArray(items) || items.length === 0) {
         return <p className="text-muted fst-italic">N/A</p>;
@@ -17,25 +16,42 @@ const renderListItems = (items) => {
     );
 };
 
-function JobDetail({ job }) {
+function JobDetail({ jobId }) {
+    const [job, setJob] = useState({});
+
+    useEffect(() => {
+        const getJob = async () => {
+            if (jobId) {
+                try {
+                    const response = await getJobById(jobId);
+                    setJob(response.data);
+                } catch (error) {
+                    console.error("Error fetching job details:", error);
+                }
+            }
+        };
+        console.log("mount")
+        getJob();
+    }, [jobId]);
+
+    if (!job) {
+        return <p className="text-center">Loading job details...</p>;
+    }
+
     const {
-        title,
-        companyName,
-        companyId,
-        jobApplyPositionId,
-        details,
-        benefits,
-        descriptions,
-        requirements,
-        location,
-        degree,
-        salary,
-        jobType,
-        status
-    } = job || {};
+        title = "Unknown Title",
+        companyId = {},
+        details = [],
+        benefits = [],
+        descriptions = [],
+        requirements = [],
+        location = "Not specified",
+        degree = "Not specified",
+        salary = {},
+        jobType = {},
+    } = job;
 
-    const hasSalaryInfo = salary && Object.keys(salary).length > 0; // Added check for salary existence
-
+    const hasSalaryInfo = salary && Object.keys(salary).length > 0;
     const scrollableBodyStyle = {
         maxHeight: '65vh',
         overflowY: 'auto',
@@ -43,12 +59,12 @@ function JobDetail({ job }) {
     };
 
     return (
-        <Card className="mb-3 job-posting-card shadow-sm w-100 d-flex flex-column" >
+        <Card className="mb-3 job-posting-card shadow-sm w-100 d-flex flex-column">
             <Card.Header className="bg-light border-bottom p-3">
                 <Stack gap={1}>
                     <Card.Title as="h4" className="mb-1">{title}</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">
-                        {companyId}
+                        {companyId?.companyName || "Unknown Company"}
                     </Card.Subtitle>
                     <div>
                         <FaMapMarkerAlt className="me-2 text-secondary" />{location}
@@ -59,7 +75,7 @@ function JobDetail({ job }) {
                 <Stack direction="horizontal" gap={3} className="flex-wrap mb-4 pb-3 border-bottom">
                     <div>
                         <FaBriefcase className="me-2 text-primary" />
-                        <strong>Type:</strong> <Badge bg="info">{jobType}</Badge>
+                        <strong>Type:</strong> <Badge bg="info">{jobType?.name || "N/A"}</Badge>
                     </div>
                     <div>
                         <FaGraduationCap className="me-2 text-primary" />
@@ -82,33 +98,33 @@ function JobDetail({ job }) {
                     )}
                 </Stack>
 
-                {details && details.length > 0 && (
-                    <div className="mb-4  border-bottom">
+                {details.length > 0 && (
+                    <div className="mb-4 border-bottom">
                         <h5 className="mb-2"><FaRegFileAlt className="me-2 text-info" />Details</h5>
                         {renderListItems(details)}
                     </div>
                 )}
 
-                {descriptions && descriptions.length > 0 && (
-                    <div className="mb-4  border-bottom">
+                {descriptions.length > 0 && (
+                    <div className="mb-4 border-bottom">
                         <h5 className="mb-2"><FaRegListAlt className="me-2 text-info" />Job Description</h5>
                         {renderListItems(descriptions)}
                     </div>
                 )}
 
-                {requirements && requirements.length > 0 && (
-                    <div className="mb-4  border-bottom">
+                {requirements.length > 0 && (
+                    <div className="mb-4 border-bottom">
                         <h5 className="mb-2"><FaCheckSquare className="me-2 text-info" />Requirements</h5>
                         {renderListItems(requirements)}
                     </div>
                 )}
-                {benefits && benefits.length > 0 && (
-                    <div className="mb-4  border-bottom">
+
+                {benefits.length > 0 && (
+                    <div className="mb-4 border-bottom">
                         <h5 className="mb-2"><FaCheckSquare className="me-2 text-info" />Benefits</h5>
                         {renderListItems(benefits)}
                     </div>
                 )}
-
             </Card.Body>
 
             <Card.Footer className="bg-light p-3 text-end mt-auto">
