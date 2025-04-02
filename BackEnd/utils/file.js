@@ -1,19 +1,10 @@
 const cloudinary = require("cloudinary").v2;
-
-// Trong file chứa config Cloudinary
-console.log("--- Checking Cloudinary Env Varscdssđs ---");
-console.log("CLOUD_NAME:", "dq7dbaqd3");
-console.log("API_KEY:", "829283612981464"); // Xem nó có giá trị không
-console.log("API_SECRET:", "Jw4s1Ko7TTTH5TsBtgD8soAGpO4"); // Không log secret thật
-console.log("--- End Check ---");
+const config = require("../config");
 
 cloudinary.config({
-  cloud_name: "dq7dbaqd3",
-  api_key: "829283612981464",
-  api_secret: "Jw4s1Ko7TTTH5TsBtgD8soAGpO4",
-  // cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  // api_key: process.env.CLOUDINARY_API_KEY,
-  // api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true,
 });
 
