@@ -2,7 +2,7 @@ var jobModel = require("../schemas/jobs.js");
 module.exports = {
   GetAllJobs: async function () {
     return await jobModel
-      .find({ isDeleted: false })
+      .find({ $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }] })
       .populate({
         path: "companyId",
         populate: { path: "userId" },
@@ -12,7 +12,7 @@ module.exports = {
   },
   GetAllJobsByCompanyId: async function (companyid) {
     return await jobModel
-      .find({ companyId: companyid })
+      .find({ companyId: companyid, $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }] })
       .populate("jobApplyPositionId")
       .populate("jobType");
   },
@@ -47,7 +47,7 @@ module.exports = {
   GetJobById: async function (id) {
     return await jobModel
       .findOne({
-        _id: id,
+        _id: id,$or: [{ isDeleted: false }, { isDeleted: { $exists: false } }]
       })
       .populate({
         path: "companyId",

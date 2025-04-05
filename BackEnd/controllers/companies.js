@@ -6,12 +6,13 @@ const { sendError } = require("../utils/responseHandler");
 module.exports = {
   GetAllCompany: async function () {
     return await companyModel.find({
-      isDeleted: false,
+      $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }]
     });
   },
   GetCompanyById: async function (id) {
     return await companyModel.findOne({
       _id: id,
+      $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }]
     });
   },
   CreateCompany: async function (taxCode, body, imageUrl, userId) {

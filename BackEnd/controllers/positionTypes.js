@@ -2,12 +2,12 @@ var positionTypeModel = require('../schemas/position_Types.js')
 module.exports = {
     GetAllpositionTypes: async function(){
         return await positionTypeModel.find({
-            isDeleted:false
+            $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }]
           })
     },
     GetpositionTypeByID: async function(id){
         return await positionTypeModel.findOne({
-            _id:id
+            _id:id, $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }]
           })
     },
     CreatepositionType:async function(name){

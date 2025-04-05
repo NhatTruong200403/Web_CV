@@ -2,7 +2,7 @@ var roleModel = require('../schemas/role')
 module.exports = {
     GetAllRoles: async function(){
         return await roleModel.find({
-            isDeleted:false
+            $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }]
           })
     },
     CreateRole:async function(name){
