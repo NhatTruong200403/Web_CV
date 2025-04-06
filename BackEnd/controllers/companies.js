@@ -9,6 +9,12 @@ module.exports = {
       $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }]
     });
   },
+  GetByUser: async function (userId) {
+    return await companyModel.findOne({
+      userId: userId,
+      $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }]
+    });
+  },
   GetCompanyById: async function (id) {
     return await companyModel.findOne({
       _id: id,
@@ -25,11 +31,11 @@ module.exports = {
       );
       let newJob = new companyModel({
         userId: userId,
-        companyName: company.name,
-        internationalName: company.internationalName,
-        shortName: company.shortName,
+        companyName: company.name || "",
+        internationalName: company.internationalName || "",
+        shortName: company.shortName || "",
         taxCode: taxCode,
-        address: company.address,
+        address: company.address || "",
         websiteUrl: body.websiteUrl,
         description: body.description,
         imageUrl: imageUrl,

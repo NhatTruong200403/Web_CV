@@ -25,6 +25,10 @@ router.get(
     }
   }
 );
+router.get("/GetCompanyIdByUser",check_authentication, check_authorization(constants.COMPANY_PERMISSION), async function (req, res, next) {
+  let company = await companies.GetByUser(req.user._id);
+  sendSuccess(res, company, "Get company successfully", 200);
+});
 router.get("/cv", async function (req, res, next) {
   try {
 
