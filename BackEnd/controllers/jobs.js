@@ -1,3 +1,4 @@
+const UserModel = require("moongose/models/user_model.js");
 var jobModel = require("../schemas/jobs.js");
 module.exports = {
   GetAllJobs: async function () {
@@ -12,7 +13,10 @@ module.exports = {
   },
   GetAllJobsByCompanyId: async function (companyid) {
     return await jobModel
-      .find({ companyId: companyid, $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }] })
+      .find({
+        companyId: companyid,
+        $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }],
+      })
       .populate("jobApplyPositionId")
       .populate("jobType");
   },
@@ -22,20 +26,18 @@ module.exports = {
         path: "companyId",
         populate: { path: "userId" },
       });
-      if(jobfind.companyId.userId._id.toString() !== userId.toString()){
+      if (jobfind.companyId.userId._id.toString() !== userId.toString()) {
         throw new Error("You don't have permission");
       }
-      const job = await jobModel
-        .findById(jobId)
-        .populate({
-          path: "applicants"
-        })
-        // .populate({
-        //   path: "companyId",
-        //   populate: { path: "userId" },
-        // })
-        // .populate("jobApplyPositionId")
-        // .populate("jobType");
+      const job = await jobModel.findById(jobId).populate({
+        path: "applicants",
+      });
+      // .populate({
+      //   path: "companyId",
+      //   populate: { path: "userId" },
+      // })
+      // .populate("jobApplyPositionId")
+      // .populate("jobType");
       if (!job) {
         throw new Error("Job not found");
       }
@@ -47,7 +49,8 @@ module.exports = {
   GetJobById: async function (id) {
     return await jobModel
       .findOne({
-        _id: id,$or: [{ isDeleted: false }, { isDeleted: { $exists: false } }]
+        _id: id,
+        $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }],
       })
       .populate({
         path: "companyId",
@@ -73,7 +76,7 @@ module.exports = {
       if (!job) {
         throw new Error("Job not found.");
       }
-      if(user._id.toString() !== job.companyId.userId.toString()){
+      if (user._id.toString() !== job.companyId.userId.toString()) {
         throw new Error("You can't update this job.");
       }
       job.updateAllowedFields(jobData);
@@ -86,7 +89,11 @@ module.exports = {
     try {
       let job = await jobModel.findById(jobId);
       if (!job) {
-        throw new Error('Job not found');
+        throw new Error("Job not found");
+      }
+      let user = await UserModel.findOne(userId);
+      if (user.cvFile == "") {
+        throw new Error("User ch cập nhật CV");
       }
       if (!job.applicants.includes(userId)) {
         job = await jobModel.findByIdAndUpdate(
@@ -97,13 +104,13 @@ module.exports = {
           { new: true }
         );
       }
-  
+
       return job;
     } catch (error) {
       throw new Error(error.message);
     }
   },
-  
+
   DeleteJob: async function (id, user) {
     try {
       let job = await jobModel.findById(id).populate("companyId");
@@ -111,7 +118,7 @@ module.exports = {
       if (!job) {
         throw new Error("Job not found.");
       }
-      if(user._id.toString() !== job.companyId.userId.toString()){
+      if (user._id.toString() !== job.companyId.userId.toString()) {
         throw new Error("You can't update this job.");
       }
       return await jobModel.findByIdAndUpdate(id, {

@@ -7,7 +7,7 @@ let { sendSuccess, sendError } = require('../utils/responseHandler');
 let jwt = require('jsonwebtoken')
 let constants = require('../utils/constants')
 const key = require('../config');
-let { check_authentication } = require('../utils/check_auth')
+let { Authentication } = require('../utils/check_auth')
 let { validate, validatorLogin,validatorSignup, validatorForgotPassword, validatorChangePassword } = require('../utils/validators')
 let crypto = require('crypto')
 let {sendmail} = require('../utils/sendmail')
@@ -17,7 +17,7 @@ router.get('/google', authGoogle.authenticate);
 router.get('/google/callback', ...authGoogle.handleCallback);
 
 
-
+// Đăng nhập
 router.post('/login', validate, async function (req, res, next) {
     try {
         let body = req.body;
@@ -33,7 +33,7 @@ router.post('/login', validate, async function (req, res, next) {
         next(error)
     }
 });
-
+// Đăng ký
 router.post('/signup',validatorSignup, validate, async function (req, res, next) {
     try {
         let body = req.body;
@@ -45,7 +45,8 @@ router.post('/signup',validatorSignup, validate, async function (req, res, next)
         next(error)
     }
 })
-router.post('/changepassword', check_authentication, async function (req, res, next) {
+// Đổi mật khẩu
+router.post('/changepassword', Authentication, async function (req, res, next) {
     try {
         let body = req.body;
         let oldpassword = body.oldpassword;
@@ -57,11 +58,11 @@ router.post('/changepassword', check_authentication, async function (req, res, n
     }
 
 })
-
-router.get('/me', check_authentication, async function (req, res, next) {
+// Lấy user bằng token
+router.get('/me', Authentication, async function (req, res, next) {
     sendSuccess(res, req.user,"Get info user successfully", 200)
 })
-
+// Quên mất khẩu gửi email
 router.post('/forgotpassword', validatorForgotPassword, validate, async function (req, res, next) {
     try {
         let email = req.body.email;
@@ -86,7 +87,7 @@ router.post('/forgotpassword', validatorForgotPassword, validate, async function
 })
 
 //cai 2 thu vien: nodemailer, multer
-
+// Đổi mật khẩu cũ thành mới
 router.post('/reset_password/:token', validatorChangePassword, 
 validate, async function (req, res, next) {
     try {

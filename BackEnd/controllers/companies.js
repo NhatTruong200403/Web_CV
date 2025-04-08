@@ -2,6 +2,7 @@ const { default: axios } = require("axios");
 var companyModel = require("../schemas/company");
 var userModel = require("../schemas/user");
 const Users = require("./users");
+const { uploadImage, uploadCV } = require("../utils/file");
 const { sendError } = require("../utils/responseHandler");
 module.exports = {
   GetAllCompany: async function () {
@@ -21,26 +22,23 @@ module.exports = {
       $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }]
     });
   },
-  CreateCompany: async function (taxCode, body, imageUrl, userId) {
+  CreateCompany: async function (req) {
     try {
       let company = await this.CheckCompanyTaxCode(
-        taxCode,
-        body,
-        imageUrl,
-        userId
+        req.params.taxCode,
       );
+      let imageUrl = await uploadImage(req.file);
       let newJob = new companyModel({
         userId: userId,
         companyName: company.name || "",
         internationalName: company.internationalName || "",
         shortName: company.shortName || "",
-        taxCode: taxCode,
+        taxCode: req.params.taxCode,
         address: company.address || "",
-        websiteUrl: body.websiteUrl,
-        description: body.description,
+        websiteUrl: req.body.websiteUrl,
+        description: req.body.description,
         imageUrl: imageUrl,
       });
-      await Users.UpdateRoleCompany(userId, "Company");
       return await newJob.save();
     } catch (error) {
       throw new Error(error.message);

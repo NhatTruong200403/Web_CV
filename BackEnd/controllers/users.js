@@ -169,7 +169,7 @@ module.exports = {
   DeleteAnUser: async function (id) {
     try {
       return await userModel.findByIdAndUpdate(id, {
-        status: false,
+        isDeleted : true
       });
     } catch (error) {
       throw new Error(error.message);
