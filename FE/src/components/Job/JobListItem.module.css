@@ -1,0 +1,33 @@
+/* src/components/Job/JobListItem.module.css */
+.jobCard {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: 1px solid #e0e0e0;
+    border-left: 4px solid transparent; /* Đường viền trái để đánh dấu selected */
+}
+
+.jobCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #0d6efd; /* Màu primary của bootstrap */
+}
+
+.jobCard.selected {
+    border-left: 4px solid #0d6efd; /* Màu primary */
+    background-color: #f8f9fa; /* Màu sáng nhẹ */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.jobTitle {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Có thể thêm style cho snippet nếu bỏ comment ở trên */
+/* .jobSnippet {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+} */

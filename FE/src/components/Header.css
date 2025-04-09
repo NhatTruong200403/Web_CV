@@ -1,0 +1,17 @@
+/* src/components/Header.css */
+.navbar-nav .nav-link.active {
+    font-weight: bold;
+    /* Thêm border-bottom hoặc background nhẹ nếu muốn */
+     /* border-bottom: 2px solid white; */
+  }
+  
+  /* Căn chỉnh icon trong dropdown nếu cần */
+  #user-nav-dropdown .dropdown-item svg {
+      vertical-align: middle; /* Hoặc text-bottom */
+      margin-bottom: 2px; /* Tinh chỉnh vị trí */
+  }
+  
+  /* Đảm bảo dropdown menu không quá hẹp */
+  #user-nav-dropdown .dropdown-menu {
+      min-width: 180px;
+  }

@@ -1,0 +1,72 @@
+/* src/components/Job/JobList.module.css */
+
+.jobListColumn {
+    /* Thêm padding nếu cần */
+}
+
+.jobListContainer {
+    max-height: calc(100vh - 180px); /* Điều chỉnh chiều cao dựa trên header và search bar */
+    overflow-y: auto;
+    padding-right: 10px; /* Khoảng trống cho thanh cuộn */
+    margin-right: -10px; /* Bù lại padding để nội dung không bị lệch */
+}
+
+/* Tùy chỉnh thanh cuộn (Webkit browsers) */
+.jobListContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+.jobListContainer::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.jobListContainer::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.jobListContainer::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}
+
+
+.jobDetailColumn {
+     /* Để cột detail không bị nhảy khi job list có scrollbar */
+}
+
+.stickyDetail {
+    position: sticky;
+    top: 70px; /* Khoảng cách từ top, điều chỉnh dựa vào chiều cao header */
+    height: calc(100vh - 90px); /* Chiều cao tối đa của phần detail */
+    overflow-y: hidden; /* Ngăn scroll của wrapper */
+    /* Phần JobDetail bên trong sẽ tự scroll nếu cần */
+}
+
+/* Placeholder card styling */
+.placeholderCard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Chiếm toàn bộ chiều cao của wrapper */
+    border: 2px dashed #e0e0e0;
+    background-color: #f8f9fa;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .jobListContainer {
+        max-height: 40vh; /* Giảm chiều cao trên màn hình nhỏ */
+        margin-bottom: 20px;
+    }
+    .stickyDetail {
+        position: relative; /* Bỏ sticky trên màn hình nhỏ */
+        top: auto;
+        height: auto;
+        margin-top: 20px;
+    }
+    .placeholderCard {
+        height: auto;
+        min-height: 200px; /* Chiều cao tối thiểu */
+    }
+}
