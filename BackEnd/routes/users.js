@@ -40,72 +40,79 @@ router.get(
   }
 );
 
+router.get("/cv", Authentication, async function (req, res, next) {
+  // <--- Thêm Authentication
+  try {
+    // Lấy thông tin người dùng từ middleware Authentication
+    const userId = req.user?._id; // <--- Lấy userId
+    if (!userId) {
+      // Nếu không có userId (lỗi Authentication?), trả về lỗi
+      return sendError(
+        res,
+        "Không xác thực được người dùng",
+        "UNAUTHENTICATED",
+        401
+      );
+    }
 
-router.get("/cv", Authentication, async function (req, res, next) { // <--- Thêm Authentication
-   try {
-      // Lấy thông tin người dùng từ middleware Authentication
-      const userId = req.user?._id; // <--- Lấy userId
-      if (!userId) {
-          // Nếu không có userId (lỗi Authentication?), trả về lỗi
-           return sendError(res, "Không xác thực được người dùng", "UNAUTHENTICATED", 401);
-      }
-  
     const pdfBuffer = await generatePdf.generatePdf();
     if (!pdfBuffer) {
-     console.error("Hàm generatePdf không trả về buffer.");
-     return sendError(
-      res,
-          "Không thể tạo file PDF",
-          "PDF_GENERATION_FAILED",
-          500
-        );
-      }
-  
-      console.log(
-        "PDF Buffer đã được tạo, dung lượng:",
-        pdfBuffer.length,
-        "bytes"
-      );
-      console.log("Bắt đầu upload lên cloud...");
-  
-      const fileObjectForUpload = {
-        buffer: pdfBuffer,
-        mimetype: "application/pdf",
-      };
-      const folderName = "CV";
-  
+      console.error("Hàm generatePdf không trả về buffer.");
+      return sendError(
+        res,
+        "Không thể tạo file PDF",
+        "PDF_GENERATION_FAILED",
+        500
+      );
+    }
+
+    console.log(
+      "PDF Buffer đã được tạo, dung lượng:",
+      pdfBuffer.length,
+      "bytes"
+    );
+    console.log("Bắt đầu upload lên cloud...");
+
+    const fileObjectForUpload = {
+      buffer: pdfBuffer,
+      mimetype: "application/pdf",
+    };
+    const folderName = "CV";
+
     // Gọi uploadCV với đối tượng và tên thư mục
     const url = await uploadCV(fileObjectForUpload, folderName);
     console.log("Upload thành công, URL:", url);
-  
-      // ===>>> THÊM BƯỚC CẬP NHẬT DATABASE Ở ĐÂY <<<===
-      if (url) {
-          try {
-              // Gọi controller để cập nhật trường cvFile trong DB cho user hiện tại
-              await userController.UpdateCV(userId, url); // <--- Gọi hàm cập nhật CV
-              console.log(`Đã cập nhật CV URL cho user ${userId} vào database.`);
-          } catch (updateError) {
-              // Ghi log lỗi cập nhật DB nhưng vẫn có thể trả về URL cho client
-              console.error(`Lỗi khi cập nhật CV URL vào database cho user ${userId}:`, updateError);
-              // Tùy chọn: Có thể trả về lỗi ở đây nếu việc cập nhật DB là bắt buộc
-              // return sendError(res, "Lỗi khi lưu URL CV vào hồ sơ", "DB_UPDATE_FAILED", 500);
-          }
+
+    // ===>>> THÊM BƯỚC CẬP NHẬT DATABASE Ở ĐÂY <<<===
+    if (url) {
+      try {
+        // Gọi controller để cập nhật trường cvFile trong DB cho user hiện tại
+        await userController.UpdateCV(userId, url); // <--- Gọi hàm cập nhật CV
+        console.log(`Đã cập nhật CV URL cho user ${userId} vào database.`);
+      } catch (updateError) {
+        // Ghi log lỗi cập nhật DB nhưng vẫn có thể trả về URL cho client
+        console.error(
+          `Lỗi khi cập nhật CV URL vào database cho user ${userId}:`,
+          updateError
+        );
+        // Tùy chọn: Có thể trả về lỗi ở đây nếu việc cập nhật DB là bắt buộc
+        // return sendError(res, "Lỗi khi lưu URL CV vào hồ sơ", "DB_UPDATE_FAILED", 500);
       }
-      // ===>>> KẾT THÚC BƯỚC CẬP NHẬT <<<===
-  
-      // Vẫn trả về URL thành công cho client
-      sendSuccess(res, { pdfUrl: url }, "Tạo và upload CV thành công", 200);
-  
-    } catch (error) {
-      console.error("Lỗi trong route /cv:", error);
-      sendError(
-        res,
-        error.message || "Lỗi máy chủ không xác định",
-        "SERVER_ERROR",
-        500
-      );
-    }
-  });
+    }
+    // ===>>> KẾT THÚC BƯỚC CẬP NHẬT <<<===
+
+    // Vẫn trả về URL thành công cho client
+    sendSuccess(res, { pdfUrl: url }, "Tạo và upload CV thành công", 200);
+  } catch (error) {
+    console.error("Lỗi trong route /cv:", error);
+    sendError(
+      res,
+      error.message || "Lỗi máy chủ không xác định",
+      "SERVER_ERROR",
+      500
+    );
+  }
+});
 
 // Lấy tất cả các job mà userId đã apply
 router.get(
@@ -149,6 +156,7 @@ router.post(
           500
         );
       }
+      console.log("UserId",req.user._id);
       let result = await companies.CreateCompany(req);
       await users.UpdateRoleCompany(req.user._id, "Company");
       sendSuccess(res, result, "Update company successfully", 200);

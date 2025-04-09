@@ -29,7 +29,7 @@ module.exports = {
       );
       let imageUrl = await uploadImage(req.file);
       let newJob = new companyModel({
-        userId: userId,
+        userId: req.user._id,
         companyName: company.name || "",
         internationalName: company.internationalName || "",
         shortName: company.shortName || "",

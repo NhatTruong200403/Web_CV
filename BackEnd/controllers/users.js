@@ -70,12 +70,16 @@ module.exports = {
       })
       .populate("role");
   },
-  ApplyJob: async function (jobId, userId) {
+  ApplyJob: async function (Id, userId) {
     try {
+      const jobId = mongoose.Types.ObjectId(Id);
       console.log(userId)
       let user = await UserModel.findById(userId);
       if (!user) {
         throw new Error('Khong tim thay user');
+      }
+      if(user.appliJobs && user.appliJobs.includes(jobId)){
+        throw new Error('Ban da ung tuyen cong viec nay roi');
       }
       if(user.status === 'pending' && user.cvFile == "") {
         throw new Error('Ban chua upload CV');

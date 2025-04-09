@@ -10,6 +10,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var app = express();
 
+
 mongoose.connect("mongodb://localhost:27017/JobsDatabase");
 mongoose.connection.on('connected',async () => {
   console.log("🚀Connect to database success");
@@ -30,7 +31,6 @@ mongoose.connection.on('connected',async () => {
   //   }
   // }
 });
-
 
 
 // view engine setup
