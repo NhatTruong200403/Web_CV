@@ -14,8 +14,8 @@ import CompanyJobList from "../components/Company/CompanyJobList";
 import ManageRoles from "../components/Admin/ManageRoles";
 import ManageJobs from "../components/Admin/ManageJobs";
 import ManageJobTypes from "../components/Admin/ManageJobTypes";
-// Sửa import: Giả sử file là ManageUser.js và export default component ManageUsers
 import ManageUsers from "../components/Admin/ManageUser";
+import ManagePositionTypes from "../components/Admin/ManagePositionTypes";
 // import AdminDashboard from "../components/Admin/AdminDashboard"; // Import nếu có component này
 
 // --- Protected Route Components (Ví dụ Implementation) ---
@@ -83,6 +83,11 @@ const AppRoutes = () => {
                 path="/company/jobs"
                 element={<ProtectedCompanyRoute><CompanyJobList /></ProtectedCompanyRoute>}
             />
+
+<Route
+                path="/PersonalPosts"
+                element={<ProtectedCompanyRoute><CompanyJobList /></ProtectedCompanyRoute>}
+            />
              {/* Các route khác chỉ Company mới thấy */}
 
 
@@ -95,6 +100,7 @@ const AppRoutes = () => {
                 <Route path="/admin/jobs" element={<ProtectedAdminRoute><ManageJobs /></ProtectedAdminRoute>} />
                 <Route path="/admin/job-types" element={<ProtectedAdminRoute><ManageJobTypes /></ProtectedAdminRoute>} />
                 <Route path="/admin/users" element={<ProtectedAdminRoute><ManageUsers /></ProtectedAdminRoute>} />
+                <Route path="/admin/position-types" element={<ProtectedAdminRoute><ManagePositionTypes /></ProtectedAdminRoute>} /> 
             {/* </Route> */}
 
 

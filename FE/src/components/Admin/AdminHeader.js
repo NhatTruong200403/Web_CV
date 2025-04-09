@@ -33,6 +33,9 @@ function AdminHeader() {
                         <Nav.Link as={NavLink} to="/admin/job-types">
                             <FaTags className="me-1" /> Quản Lý Loại CV
                         </Nav.Link>
+                        <Nav.Link as={NavLink} to="/admin/position-types">
+                            <FaTags className="me-1" /> Quản Lý Loại Vị Trí
+                        </Nav.Link>
                         {/* Thêm các link admin khác */}
                          {/* <Nav.Link as={NavLink} to="/admin/users">Quản Lý Users</Nav.Link> */}
                          {/* <Nav.Link as={NavLink} to="/admin/jobs">Quản Lý Jobs</Nav.Link> */}

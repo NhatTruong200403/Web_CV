@@ -55,11 +55,11 @@ function Header() {
                                 Trang chủ
                             </Nav.Link>
                             {/* Link ví dụ chỉ Company thấy */}
-                            {/* {auth.isAuthenticated && auth.role === 'Company' && (
-                                <Nav.Link as={NavLink} to="/company/dashboard">
+                            {auth.isAuthenticated && auth.role === 'Company' && (
+                                <Nav.Link as={NavLink} to="/PersonalPosts">
                                     Company Dashboard
                                 </Nav.Link>
-                            )} */}
+                            )} 
                         </Nav>
 
                         {/* User Authentication / Actions */}

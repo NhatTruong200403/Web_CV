@@ -30,6 +30,8 @@ function UpCompanyModal(props) {
     };
     var registerCompany = async () => {
         try {
+            var token = sessionStorage.getItem("token");
+            console.log(token);
             var response = await upCompany(taxCode, formData);
 
             toast.success("submit thành công")
