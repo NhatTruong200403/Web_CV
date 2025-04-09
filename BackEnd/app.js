@@ -35,7 +35,7 @@ app.use('/roles', require('./routes/roles'));
 app.use('/auth', require('./routes/auth'));
 app.use('/jobs', require('./routes/jobs'));
 app.use('/jobTypes', require('./routes/jobTypes'));
-app.use('/positonTypes', require('./routes/positionTypes'));
+app.use('/positionTypes', require('./routes/positionTypes'));
 
 
 // const port = 3000;

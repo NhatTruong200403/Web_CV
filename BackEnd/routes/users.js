@@ -42,37 +42,37 @@ router.get(
 
 
 router.get("/cv", Authentication, async function (req, res, next) { // <--- Thêm Authentication
-   try {
-      // Lấy thông tin người dùng từ middleware Authentication
-      const userId = req.user?._id; // <--- Lấy userId
-      if (!userId) {
-          // Nếu không có userId (lỗi Authentication?), trả về lỗi
-           return sendError(res, "Không xác thực được người dùng", "UNAUTHENTICATED", 401);
-      }
-  
-    const pdfBuffer = await generatePdf.generatePdf();
-    if (!pdfBuffer) {
-     console.error("Hàm generatePdf không trả về buffer.");
-     return sendError(
-      res,
-          "Không thể tạo file PDF",
-          "PDF_GENERATION_FAILED",
-          500
-        );
-      }
-  
-      console.log(
-        "PDF Buffer đã được tạo, dung lượng:",
-        pdfBuffer.length,
-        "bytes"
-      );
-      console.log("Bắt đầu upload lên cloud...");
-  
-      const fileObjectForUpload = {
-        buffer: pdfBuffer,
-        mimetype: "application/pdf",
-      };
-      const folderName = "CV";
+  try {
+     // Lấy thông tin người dùng từ middleware Authentication
+     const userId = req.user?._id; // <--- Lấy userId
+     if (!userId) {
+         // Nếu không có userId (lỗi Authentication?), trả về lỗi
+          return sendError(res, "Không xác thực được người dùng", "UNAUTHENTICATED", 401);
+     }
+ 
+   const pdfBuffer = await generatePdf.generatePdf();
+   if (!pdfBuffer) {
+    console.error("Hàm generatePdf không trả về buffer.");
+    return sendError(
+     res,
+      "Không thể tạo file PDF",
+      "PDF_GENERATION_FAILED",
+       500
+    );  
+   }
+ 
+    console.log(
+      "PDF Buffer đã được tạo, dung lượng:",
+      pdfBuffer.length,
+      "bytes"
+    );
+    console.log("Bắt đầu upload lên cloud...");
+ 
+    const fileObjectForUpload = {
+       buffer: pdfBuffer,
+       mimetype: "application/pdf",
+    };
+     const folderName = "CV";
   
     // Gọi uploadCV với đối tượng và tên thư mục
     const url = await uploadCV(fileObjectForUpload, folderName);
@@ -94,17 +94,17 @@ router.get("/cv", Authentication, async function (req, res, next) { // <--- Thê
       // ===>>> KẾT THÚC BƯỚC CẬP NHẬT <<<===
   
       // Vẫn trả về URL thành công cho client
-      sendSuccess(res, { pdfUrl: url }, "Tạo và upload CV thành công", 200);
+      sendSuccess(res, { pdfUrl: url }, "Tạo và upload CV thành công", 200);
   
-    } catch (error) {
-      console.error("Lỗi trong route /cv:", error);
-      sendError(
-        res,
-        error.message || "Lỗi máy chủ không xác định",
-        "SERVER_ERROR",
-        500
-      );
-    }
+   } catch (error) {
+  console.error("Lỗi trong route /cv:", error);
+  sendError(
+    res,
+    error.message || "Lỗi máy chủ không xác định",
+    "SERVER_ERROR",
+    500
+  );
+  }
   });
 
 // Lấy tất cả các job mà userId đã apply
@@ -137,6 +137,7 @@ router.post(
   upload.single("image"),
   async function (req, res, next) {
     try {
+      console.log("UserId",req.user._id);
       if (
         !req.file ||
         !req.body.description?.trim() ||
