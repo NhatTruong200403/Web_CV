@@ -4,6 +4,7 @@ import { getAllJobTypes } from "../../services/JobTypeService";
 import { getAllPositionTypes } from "../../services/PositionType";
 import { createJob } from "../../services/JobService";
 import { getCompanyIdByUser } from "../../services/UserService";
+import { toast } from "react-toastify";
 
 function CreateJobModal(props) {
     var { show, handleClose } = props
@@ -62,6 +63,8 @@ function CreateJobModal(props) {
         console.log("Submit Job:", newJob);
         var res = await createJob(newJob);
         console.log(res);
+        toast.success("Đăng tin thành công")
+        handleClose()
     };
     useEffect(() => {
         const fetchData = async () => {

@@ -74,11 +74,11 @@ function ManagePositionTypes() {
         <Container fluid className="mt-4">
             <Row className="mb-3 align-items-center">
                 <Col>
-                    <h2>Manage Position Types</h2>
+                    <h2>Quản lý loại vị trí</h2>
                 </Col>
                 <Col xs="auto">
                     <Button variant="primary" onClick={handleShowCreateModal}>
-                        <FaPlus className="me-1" /> Add New
+                        <FaPlus className="me-1" /> Tạo mới
                     </Button>
                 </Col>
             </Row>
@@ -101,9 +101,9 @@ function ManagePositionTypes() {
                             <tr>
                                 <th>#</th>
                                 <th>ID</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Actions</th>
+                                <th>Tên</th>
+                                <th>Mô tả</th>
+                                <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>

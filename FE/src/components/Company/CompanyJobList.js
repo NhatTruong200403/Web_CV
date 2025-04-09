@@ -62,8 +62,8 @@ function CompanyJobList() {
             const response = await getAllJobsByCompanyId(companyId);
             // Sort jobs by creation date, newest first
             const sortedJobs = (response.data || []).sort((a, b) =>
-                 new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
-             );
+                new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+            );
             setJobs(sortedJobs);
 
         } catch (err) {
@@ -105,29 +105,29 @@ function CompanyJobList() {
         setShowDeleteModal(true);
     };
     const handleCloseDelete = () => {
-         const deletedId = jobToDelete?._id; // Store id before resetting
+        const deletedId = jobToDelete?._id; // Store id before resetting
         setShowDeleteModal(false);
         setJobToDelete(null);
         reloadJobsList(); // Reload after closing
-         // If the deleted job was the one being viewed, clear the detail view
-         if (selectedJobForDetail?._id === deletedId) {
-             setSelectedJobForDetail(null);
-         }
+        // If the deleted job was the one being viewed, clear the detail view
+        if (selectedJobForDetail?._id === deletedId) {
+            setSelectedJobForDetail(null);
+        }
     };
 
 
     return (
         // Provide context for modals to trigger reload
         <JobContext.Provider value={{ reloadJobs: reloadJobsList }}>
-             {/* *** Use the imported Container *** */}
+            {/* *** Use the imported Container *** */}
             <Container fluid className="mt-4">
                 <Row className="mb-3 align-items-center">
                     <Col>
-                        <h2>My Job Postings</h2>
+                        <h2>Bài đăng cá nhân</h2>
                     </Col>
                     <Col xs="auto">
                         <Button variant="primary" onClick={handleShowCreate}>
-                            + Create New Job Posting
+                            + Tạo bài đăng mới
                         </Button>
                     </Col>
                 </Row>
@@ -139,13 +139,13 @@ function CompanyJobList() {
                     <Row>
                         {/* Left Column: Job List */}
                         <Col md={5} lg={4} style={{ maxHeight: '75vh', overflowY: 'auto' }}>
-                             {jobs.length > 0 ? jobs.map((job) => (
+                            {jobs.length > 0 ? jobs.map((job) => (
                                 <Card
                                     key={job._id}
                                     className={`mb-2 ${selectedJobForDetail?._id === job._id ? 'border-primary shadow-sm' : 'border'}`} // Added shadow for selected
                                     style={{ cursor: 'pointer' }}
                                 >
-                                     {/* Wrap Card content in Stack for better layout */}
+                                    {/* Wrap Card content in Stack for better layout */}
                                     <Stack gap={2}>
                                         <Card.Body onClick={() => setSelectedJobForDetail(job)} className="pb-1"> {/* Reduced bottom padding */}
                                             <Card.Title as="h6" className="mb-1">{job.title}</Card.Title>
@@ -154,7 +154,7 @@ function CompanyJobList() {
                                                 <Badge bg={job.status === 'approved' ? 'success' : job.status === 'rejected' ? 'danger' : 'warning'} className="ms-2 float-end">{job.status || 'pending'}</Badge>
                                             </Card.Subtitle>
                                             <div className="small text-muted">
-                                                Created: {job.createdAt ? format(new Date(job.createdAt), 'dd/MM/yyyy') : 'N/A'}
+                                                Ngày tạo: {job.createdAt ? format(new Date(job.createdAt), 'dd/MM/yyyy') : 'N/A'}
                                             </div>
                                         </Card.Body>
                                         <Card.Footer className="text-end bg-light pt-1 pb-1"> {/* Reduced padding */}
@@ -168,15 +168,15 @@ function CompanyJobList() {
                                                 <FaTrashAlt />
                                             </Button>
                                         </Card.Footer>
-                                     </Stack>
+                                    </Stack>
                                 </Card>
                             )) : (
                                 <Alert variant="info">You have not posted any jobs yet.</Alert>
-                             )}
+                            )}
                         </Col>
 
                         {/* Right Column: Job Detail */}
-                         <Col md={7} lg={8} style={{ position: 'sticky', top: '80px', height: 'calc(100vh - 100px)' }}>
+                        <Col md={7} lg={8} style={{ position: 'sticky', top: '80px', height: 'calc(100vh)' }}>
                             {selectedJobForDetail ? (
                                 <JobDetail
                                     key={selectedJobForDetail._id} // Re-render on change
@@ -184,14 +184,14 @@ function CompanyJobList() {
                                     isPersonal={false} // Company view is not 'personal' user view
                                 />
                             ) : (
-                                 !loading && jobs.length > 0 ? ( // Show placeholder only if not loading and jobs exist
+                                !loading && jobs.length > 0 ? ( // Show placeholder only if not loading and jobs exist
                                     <Card className="h-100 d-flex justify-content-center align-items-center bg-light border-dashed">
                                         <Card.Body className="text-center text-muted">
                                             <FaEye size="2em" className="mb-2" />
                                             <p>Select a job posting from the list to view its details.</p>
                                         </Card.Body>
                                     </Card>
-                                 ) : null // Don't show placeholder if loading or no jobs
+                                ) : null // Don't show placeholder if loading or no jobs
                             )}
                         </Col>
                     </Row>

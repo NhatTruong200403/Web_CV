@@ -7,6 +7,7 @@ import CreateJobModal from "../User/CreateJobModal"; // Giữ lại nếu cần
 import { useAuth } from "../../provider/AuthProvider";
 import JobListItem from "./JobListItem"; // Import component mới
 import styles from './JobList.module.css'; // Import CSS Module cho JobList
+import { jwtDecode } from "jwt-decode";
 
 function JobList() {
     const [allJobs, setAllJobs] = useState([]); // Danh sách gốc từ API
@@ -18,7 +19,11 @@ function JobList() {
     const [searchTerm, setSearchTerm] = useState("");
     const { auth } = useAuth();
     const [reload, setReload] = useState(false); // State để trigger reload
-
+    const token = localStorage.getItem('token');
+    const user = ""
+    if (token) {
+        user = jwtDecode(token);
+    }
     const getJobs = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -28,7 +33,7 @@ function JobList() {
             setFilteredJobs(response.data || []); // Khởi tạo filteredJobs
             // Tự động chọn job đầu tiên nếu có
             if (response.data && response.data.length > 0) {
-               // setSelectedJob(response.data[0]); // Tạm thời bỏ tự chọn
+                // setSelectedJob(response.data[0]); // Tạm thời bỏ tự chọn
             } else {
                 setSelectedJob(null); // Reset nếu không có job
             }
@@ -59,8 +64,8 @@ function JobList() {
                 // Thêm các trường muốn tìm kiếm khác nếu cần
             );
             setFilteredJobs(filtered);
-             // Reset selected job nếu nó không còn trong danh sách lọc
-             if (selectedJob && !filtered.some(job => job._id === selectedJob._id)) {
+            // Reset selected job nếu nó không còn trong danh sách lọc
+            if (selectedJob && !filtered.some(job => job._id === selectedJob._id)) {
                 // setSelectedJob(null); // Tạm thời bỏ reset để giữ job đang xem
             }
         }
@@ -149,18 +154,18 @@ function JobList() {
                 </Col>
 
                 {/* Cột bên phải: Chi tiết công việc */}
-                 <Col md={7} lg={8} className={`mt-2 mt-md-0 ${styles.jobDetailColumn}`}>
+                <Col md={7} lg={8} className={`mt-2 mt-md-0 ${styles.jobDetailColumn}`} style={{ position: 'sticky', top: '80px', height: 'calc(100vh)' }}>
                     <div className={styles.stickyDetail}> {/* Wrapper để làm sticky */}
                         {selectedJob ? (
                             <JobDetail
                                 key={selectedJob._id} // Thêm key để re-render khi job thay đổi
                                 jobId={selectedJob._id}
-                                isPersonal={auth.role !== 'Company'} // Ví dụ: Nếu không phải company thì là personal view
-                                // reloadChange prop không còn cần thiết nếu JobDetail tự fetch lại khi jobId đổi
+                                isPersonal={auth.role !== 'Company' || user._id != selectedJob._id} // Ví dụ: Nếu không phải company thì là personal view
+                            // reloadChange prop không còn cần thiết nếu JobDetail tự fetch lại khi jobId đổi
                             />
                         ) : (
-                             // Placeholder cải tiến khi không có job nào được chọn
-                             <Card className={`text-center p-5 ${styles.placeholderCard}`}>
+                            // Placeholder cải tiến khi không có job nào được chọn
+                            <Card className={`text-center p-5 ${styles.placeholderCard}`}>
                                 <Card.Body>
                                     <img src="/placeholder-icon.svg" alt="Select a job" width="100" className="mb-3" /> {/* Thay bằng icon phù hợp */}
                                     <Card.Title as="h5" className="text-muted">
@@ -174,7 +179,7 @@ function JobList() {
                         )}
                     </div>
                 </Col>
-            </Row>
+            </Row >
         </>
     );
 }

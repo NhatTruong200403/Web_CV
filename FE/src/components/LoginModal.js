@@ -46,6 +46,7 @@ function LoginModal(props) {
             const role = userInfo.data.role.name;
 
             saveToken(token, role);
+            handleClose();
 
         } catch (error) {
             console.error("Lỗi đăng nhập:", error.response?.data || error.message);
@@ -92,10 +93,10 @@ function LoginModal(props) {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
-                        Close
+                        Thoát
                     </Button>
                     <Button variant="primary" onClick={handleSubmit}>
-                        Save Changes
+                        Đăng nhập
                     </Button>
                     <div>
                         <button
