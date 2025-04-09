@@ -11,9 +11,26 @@ var usersRouter = require('./routes/users');
 var app = express();
 
 mongoose.connect("mongodb://localhost:27017/JobsDatabase");
-mongoose.connection.on('connected',()=>{
+mongoose.connection.on('connected',async () => {
   console.log("🚀Connect to database success");
-})
+  // const Role = require("./schemas/role");
+  // const roles = [
+  //   { name: "Admin", description: "Quản trị viên" },
+  //   { name: "Company", description: "Người tuyển dụng" },
+  //   { name: "User", description: "Người dùng thường" },
+  // ];
+
+  // for (const roleData of roles) {
+  //   const exists = await Role.findOne({ name: roleData.name });
+  //   if (!exists) {
+  //     await Role.create(roleData);
+  //     console.log(`✅ Role '${roleData.name}' đã được tạo.`);
+  //   } else {
+  //     console.log(`ℹ️ Role '${roleData.name}' đã tồn tại.`);
+  //   }
+  // }
+});
+
 
 
 // view engine setup
