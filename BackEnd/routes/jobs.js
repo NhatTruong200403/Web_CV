@@ -31,7 +31,8 @@ router.get(
   Authorizetion(constants.COMPANY_PERMISSION),
   async function (req, res, next) {
     try {
-      let job = await jobsController.GetAllJobApplies(id, req.user._id);
+      console.log(req.user._id);
+      let job = await jobsController.GetAllJobApplies(req.params.id, req.user._id);
       sendSuccess(res, job, "Get all apply job successfully", 200);
     } catch (error) {
       sendError(res, error.message, "SERVER_ERROR", 500);
@@ -58,6 +59,7 @@ router.post(
   Authorizetion(constants.COMPANY_PERMISSION),
   async function (req, res, next) {
     try {
+      console.log(req.body);
       let newJob = await jobsController.CreateJob(req.body);
       sendSuccess(res, newJob, "Create job successfully", 200);
     } catch (error) {
@@ -91,7 +93,7 @@ router.delete(
   async function (req, res, next) {
     try {
       let job = await jobsController.DeleteJob(req.params.id, req.user);
-      sendSuccess(res, job, "Delete job successfully", 200);
+      sendSuccess(res, null, "Delete job successfully", 200);
     } catch (error) {
       sendError(res, error.message, "SERVER_ERROR", 500);
     }

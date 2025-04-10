@@ -52,7 +52,7 @@ router.post(
       if (!req.body.name || req.body.name.trim() === "") {
         return sendError(res, "Role name is required", "BAD_REQUEST", 400);
       }
-      let newRole = await roleController.CreateRole(req.body.name);
+      let newRole = await roleController.CreateRole(req.body.name, req.body.description);
       sendSuccess(res, newRole, "Create role successfully", 201);
     } catch (error) {
       if (error.code === 11000) {

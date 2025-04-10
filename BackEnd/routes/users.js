@@ -42,7 +42,7 @@ router.get(
 );
 
 
-router.post("/cv", Authentication, async (req, res) => {
+router.post("/cvFast", Authentication, async (req, res) => {
   let cvData;
   let pdfUrl = null;
 
@@ -52,7 +52,9 @@ router.post("/cv", Authentication, async (req, res) => {
     }
 
     cvData = req.body;
-
+    if(!req.user.avatarUrl) {
+      return sendError(res, "Chưa cập nhật ảnh đại diện", "MISSING_DATA", 400);
+    }
     let imageUrl = req.user?.avatarUrl || null;
     cvData.personalInfo = { ...cvData.personalInfo, profileImageUrl: imageUrl };
 
@@ -63,8 +65,8 @@ router.post("/cv", Authentication, async (req, res) => {
 
     const pdfFileObject = { buffer: pdfBuffer, mimetype: "application/pdf" };
     pdfUrl = await uploadCV(pdfFileObject, "CV");
-
-    sendSuccess(res, pdfUrl, "Tạo và upload CV thành công", 201);
+    let user = await userController.UpdateCV(req.user._id, pdfUrl);
+    sendSuccess(res, user, "Tạo và upload CV thành công", 201);
 
   } catch (error) {
     console.error("Lỗi trong tiến trình tạo CV:", error);
@@ -246,6 +248,7 @@ router.post(
   upload.single("image"),
   async function (req, res, next) {
     try {
+      console.log(req.file);
       if (
         !req.file ||
         !req.body.description?.trim() ||

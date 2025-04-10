@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema(
     authProvider: { type: String, trim: true },
     appliJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
     status: { type: String, trim: true },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

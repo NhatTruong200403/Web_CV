@@ -35,6 +35,7 @@ router.put(
   upload.single("image"),
   async function (req, res, next) {
     try {
+      console.log(req.params);
       let { id, taxCode } = req.params;
       let imageUrl = "";
       if (req.file) {

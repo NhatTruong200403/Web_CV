@@ -24,14 +24,13 @@ module.exports = {
       throw new Error(`Could not fetch role with ID ${id}: ${error.message}`);
     }
   },
-  CreateRole: async function (roleName) {
+  CreateRole: async function (roleName,description) {
     try {
       const existingRole = await RoleModel.findOne({ name: { $regex: new RegExp(`^${roleName}$`, 'i') } });
       if (existingRole) {
         throw new Error(`Role with name '${roleName}' already exists.`);
       }
-
-      const newRole = new RoleModel({ name: roleName });
+      const newRole = new RoleModel({ name: roleName, description: description });
       return await newRole.save();
     } catch (error) {
       console.error("Error in CreateRole:", error);

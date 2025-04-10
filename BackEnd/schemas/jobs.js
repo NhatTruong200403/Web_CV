@@ -26,6 +26,7 @@ const jobSchema = new mongoose.Schema(
 
 
     status: { type: String, enum: ["pending", "approved", "closed"], default: "pending" },
+    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

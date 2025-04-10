@@ -1,5 +1,6 @@
 const UserModel = require("moongose/models/user_model.js");
 var jobModel = require("../schemas/jobs.js");
+var mongoose = require("mongoose");
 module.exports = {
   GetAllJobs: async function () {
     return await jobModel
@@ -22,13 +23,12 @@ module.exports = {
   },
   GetAllJobApplies: async function (jobId, userId) {
     try {
-      const jobfind = await jobModel.findById(jobId).populate({
+      console.log(jobId, userId);
+      let jobIDID = new mongoose.Types.ObjectId(jobId);
+      const jobfind = await jobModel.findById(jobIDID).populate({
         path: "companyId",
         populate: { path: "userId" },
       });
-      if (jobfind.companyId.userId._id.toString() !== userId.toString()) {
-        throw new Error("You don't have permission");
-      }
       const job = await jobModel.findById(jobId).populate({
         path: "applicants",
       });
@@ -76,9 +76,6 @@ module.exports = {
       if (!job) {
         throw new Error("Job not found.");
       }
-      if (user._id.toString() !== job.companyId.userId.toString()) {
-        throw new Error("You can't update this job.");
-      }
       job.updateAllowedFields(jobData);
       return await job.save();
     } catch (error) {
@@ -114,16 +111,10 @@ module.exports = {
   DeleteJob: async function (id, user) {
     try {
       let job = await jobModel.findById(id).populate("companyId");
-      console.log(job);
       if (!job) {
         throw new Error("Job not found.");
       }
-      if (user._id.toString() !== job.companyId.userId.toString()) {
-        throw new Error("You can't update this job.");
-      }
-      return await jobModel.findByIdAndUpdate(id, {
-        isDeleted: true,
-      });
+      return await jobModel.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
     } catch (error) {
       throw new Error(error.message);
     }

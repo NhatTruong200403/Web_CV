@@ -1,4 +1,5 @@
 let userModel = require("../schemas/user");
+let mongoose = require("mongoose");
 let roleModel = require("../schemas/role");
 let companyModel = require("../schemas/company");
 let bcrypt = require("bcrypt");
@@ -17,7 +18,8 @@ module.exports = {
           path: "appliJobs",
           populate: {
             path: "jobApplyPositionId",
-            model: "Job", 
+            model: "Job",
+            select: "_id title companyId jobApplyPositionId jobType",
           },
         });
         console.log("User: ",user);

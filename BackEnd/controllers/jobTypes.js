@@ -55,16 +55,11 @@ const UpdateJobType = async (id, data) => {
 };
 
 const DeleteJobType = async (id) => {
-     console.log(`Attempting to delete JobType with ID: ${id}`); // Giữ lại log debug
-     // Giờ đây mongoose đã được định nghĩa
-     if (!mongoose.Types.ObjectId.isValid(id)) {
-        console.error("Invalid ID format received:", id);
-        throw new Error("Invalid Job Type ID format"); // Sửa message lỗi
-    }
-
     try { // Giữ lại try...catch bên trong nếu muốn debug thêm
         console.log("Calling JobType.findByIdAndDelete...");
-        const result = await JobType.findByIdAndDelete(id);
+        const result = await JobType.findByIdAndUpdate(id,{
+            isDeleted: true,
+        });
         console.log("Result from findByIdAndDelete:", result);
         if (!result) {
              console.log(`JobType with ID ${id} not found for deletion.`);
