@@ -9,6 +9,7 @@ const companies = require("../controllers/companies");
 const users = require("../controllers/users");
 const { uploadImage, uploadCV } = require("../utils/file");
 const upload = require("../config/multer");
+const multer = require("multer");
 /* GET users listing. */
 
 // Lấy tất cả user của Admin
@@ -40,6 +41,116 @@ router.get(
   }
 );
 
+
+router.post("/cv", Authentication, async (req, res) => {
+  let cvData;
+  let pdfUrl = null;
+
+  try {
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return sendError(res, "Thiếu dữ liệu CV", "MISSING_DATA", 400);
+    }
+
+    cvData = req.body;
+
+    let imageUrl = req.user?.avatarUrl || null;
+    cvData.personalInfo = { ...cvData.personalInfo, profileImageUrl: imageUrl };
+
+    const pdfBuffer = await generatePdf.generatePdf(cvData);
+    if (!pdfBuffer) {
+      throw new Error("Không thể tạo file PDF (buffer trống)");
+    }
+
+    const pdfFileObject = { buffer: pdfBuffer, mimetype: "application/pdf" };
+    pdfUrl = await uploadCV(pdfFileObject, "CV");
+
+    sendSuccess(res, pdfUrl, "Tạo và upload CV thành công", 201);
+
+  } catch (error) {
+    console.error("Lỗi trong tiến trình tạo CV:", error);
+    sendError(res, error.message || "Lỗi máy chủ không xác định", "SERVER_ERROR", 500);
+  }
+});
+
+// // --- Route xử lý tạo CV (POST /cv) ---
+// router.post(
+//   "/cv",
+//   Authentication,
+//   upload.single("profileImage"), // Middleware xử lý ảnh trước
+//   async (req, next, res) => { // Bỏ `next` nếu không dùng đến
+//     let cvData;
+//     let imageUrl = null;
+//     let pdfUrl = null;
+//     console.log("post CV:",req.body.cvDataField);
+//     try {
+//       // --- 1. Parse CV Data ---
+//       if (!req.body.cvDataField) {
+//         return sendError(res, "Thiếu dữ liệu cvDataField", "MISSING_DATA", 400);
+//       }
+//       try {
+//         cvData = JSON.parse(req.body.cvDataField);
+//       } catch (e) {
+//         console.error("Lỗi parse cvData:", e);
+//         return sendError(res, "Dữ liệu cvData không hợp lệ", "INVALID_DATA", 400);
+//       }
+
+//       // --- 2. Upload Ảnh (nếu có) ---
+//       if (req.file) {
+//         console.log(`Đã nhận ảnh: ${req.file.originalname} (${req.file.size} bytes)`);
+//         try {
+//           const imageFileObject = { buffer: req.file.buffer, mimetype: req.file.mimetype };
+//           // Song song hóa việc upload ảnh và tạo PDF nếu generatePdf không cần imageUrl ngay lập tức
+//           // Hoặc tuần tự nếu generatePdf cần imageUrl
+//           imageUrl = await uploadImage(imageFileObject, "profile_images");
+//           console.log("Upload ảnh thành công, URL:", imageUrl);
+//           // Gán URL ảnh vào cvData để sử dụng trong PDF
+//           cvData.personalInfo = { ...cvData.personalInfo, profileImageUrl: imageUrl };
+//         } catch (uploadImageError) {
+//           console.error("Lỗi upload ảnh (bỏ qua):", uploadImageError);
+//           // Không return lỗi, tiếp tục tạo CV không có ảnh
+//         }
+//       }
+
+//       // --- 3. Tạo và Upload PDF ---
+//       // Đảm bảo generatePdf đã được sửa để nhận cvData
+//       const pdfBuffer = await generatePdf.generatePdf(cvData);
+//       if (!pdfBuffer) {
+//          // Throw error để bắt trong catch block chính
+//         throw new Error("Không thể tạo file PDF (buffer trống)");
+//       }
+//       console.log("PDF Buffer đã tạo:", pdfBuffer.length, "bytes");
+
+//       const pdfFileObject = { buffer: pdfBuffer, mimetype: "application/pdf" };
+//       pdfUrl = await uploadCV(pdfFileObject, "CV"); // Upload PDF
+//       console.log("Upload PDF thành công, URL:", pdfUrl);
+
+//       sendSuccess(res, "ok", "Tạo và upload CV thành công", 201);
+
+//     } catch (error) {
+//       // --- Xử lý lỗi tập trung ---
+//       console.error("Lỗi trong tiến trình tạo CV:", error);
+
+//       // Lỗi cụ thể từ các bước trước đó
+//       if (error.message === "Không thể tạo file PDF (buffer trống)") {
+//         return sendError(res, "Không thể tạo file PDF", "PDF_GENERATION_FAILED", 500);
+//       }
+//       // Lỗi từ multer (file không hợp lệ) đã được đưa vào đây qua Error
+//       if (error.message === "Chỉ cho phép upload file ảnh!") {
+//          return sendError(res, error.message, "INVALID_FILE_TYPE", 400);
+//       }
+//       if (error instanceof multer.MulterError) {
+//          return sendError(res, error.message, "UPLOAD_ERROR", 400); // Lỗi khác từ multer
+//       }
+
+//       // Lỗi chung
+//       sendError(res, error.message || "Lỗi máy chủ không xác định", "SERVER_ERROR", 500);
+//     }
+//   }
+// );
+
+
+
+
 router.get("/cv", Authentication, async function (req, res, next) {
   // <--- Thêm Authentication
   try {
@@ -66,21 +177,12 @@ router.get("/cv", Authentication, async function (req, res, next) {
       );
     }
 
-    console.log(
-      "PDF Buffer đã được tạo, dung lượng:",
-      pdfBuffer.length,
-      "bytes"
-    );
-    console.log("Bắt đầu upload lên cloud...");
-
     const fileObjectForUpload = {
       buffer: pdfBuffer,
       mimetype: "application/pdf",
     };
-    const folderName = "CV";
 
-    // Gọi uploadCV với đối tượng và tên thư mục
-    const url = await uploadCV(fileObjectForUpload, folderName);
+    const url = await uploadCV(fileObjectForUpload, "CV");
     console.log("Upload thành công, URL:", url);
 
     // ===>>> THÊM BƯỚC CẬP NHẬT DATABASE Ở ĐÂY <<<===

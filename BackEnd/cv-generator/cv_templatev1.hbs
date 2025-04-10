@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - {{personalInfo.name}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Reset & Base Styles --- */
+        :root {
+            /* Color Palette - Giữ nguyên hoặc tinh chỉnh nhẹ nếu muốn */
+            --primary-color: #2a628f;   /* Xanh dương đậm, chuyên nghiệp */
+            --secondary-color: #4e8d7c; /* Xanh lá cây trầm làm điểm nhấn */
+            --text-color: #333a40;      /* Màu chữ chính, tối hơn một chút */
+            --text-muted: #6c757d;      /* Màu chữ phụ, xám */
+            --background-light: #f8f9fa;/* Nền sáng */
+            --background-white: #ffffff;
+            --border-color: #dee2e6;    /* Màu viền */
+            --tag-bg: #eaf2f8;          /* Nền tag */
+            --tag-text: var(--primary-color);
+            --tag-border: #c5d9e8;
+            --shadow-color: rgba(0, 0, 0, 0.08); /* Màu đổ bóng */
+
+            /* Typography */
+            --font-primary: 'Inter', sans-serif;
+            --font-headings: 'Poppins', sans-serif;
+
+            /* Spacing (multiples of 4px/8px) - Hệ thống khoảng cách nhất quán */
+            --space-xs: 0.25rem; /* 4px */
+            --space-sm: 0.5rem;  /* 8px */
+            --space-md: 1rem;    /* 16px */
+            --space-lg: 1.5rem;  /* 24px */
+            --space-xl: 2rem;    /* 32px */
+            --space-xxl: 2.5rem; /* 40px */
+
+            /* Other */
+            --border-radius: 8px; /* Bo góc mềm mại hơn */
+            --transition-speed: 0.3s;
+            --box-shadow: 0 6px 20px var(--shadow-color); /* Bóng đổ rõ nét hơn */
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            font-size: 16px; /* Base font size */
+            scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%; /* Prevent font scaling in landscape */
+        }
+
+        body {
+            font-family: var(--font-primary);
+            line-height: 1.7; /* Tăng nhẹ line-height cho dễ đọc */
+            background-color: var(--background-light);
+            color: var(--text-color);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: var(--space-xl) 0; /* Tăng padding body */
+        }
+
+        /* --- Container --- */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--background-white);
+            padding: var(--space-xxl) var(--space-xl); /* Tăng padding ngang */
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            border-top: 6px solid var(--primary-color); /* Viền trên dày hơn */
+        }
+
+        /* --- Typography --- */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-headings);
+            font-weight: 700; /* Tăng độ đậm cho headings */
+            color: var(--primary-color);
+            margin-bottom: var(--space-md); /* Khoảng cách dưới nhất quán */
+            line-height: 1.3;
+        }
+
+        h1 { /* Tên ứng viên */
+            font-size: 2.6rem; /* Điều chỉnh lại kích thước */
+            text-align: left; /* Căn trái thay vì giữa */
+            margin-bottom: var(--space-xs); /* Giảm khoảng cách dưới tên */
+            letter-spacing: 0.5px;
+        }
+
+        h2 { /* Tiêu đề Section */
+            font-size: 1.6rem; /* Điều chỉnh kích thước */
+            font-weight: 700;
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--secondary-color); /* Viền dưới màu phụ, dày hơn */
+            padding-bottom: var(--space-sm);
+            margin-top: var(--space-xxl); /* Tăng khoảng cách trên */
+            margin-bottom: var(--space-lg);
+        }
+        /* Thêm khoảng cách cho h2 đầu tiên */
+        .section:first-of-type h2 {
+            margin-top: var(--space-xl);
+        }
+
+        p {
+            margin-bottom: var(--space-md);
+        }
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition-speed) ease, text-decoration var(--transition-speed) ease;
+        }
+
+        a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+            text-decoration-thickness: 2px; /* Underline rõ hơn */
+            text-underline-offset: 4px;
+        }
+
+        ul:not(.tech-list):not(.hobby-list):not(.skill-list) { /* Áp dụng cho UL mô tả công việc/môn học */
+            list-style: disc; /* Giữ lại list style mặc định cho các mục này */
+            padding-left: var(--space-lg); /* Thụt lề chuẩn */
+            margin-top: var(--space-sm);
+        }
+
+        ul:not(.tech-list):not(.hobby-list):not(.skill-list) li {
+            margin-bottom: var(--space-sm);
+            line-height: 1.6;
+        }
+
+
+        /* --- Header Sections --- */
+        /* Sử dụng Flexbox để sắp xếp ảnh và thông tin */
+        .display {
+            display: flex;
+            align-items: center; /* Căn giữa theo chiều dọc */
+            gap: var(--space-lg); /* Khoảng cách giữa ảnh và text */
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .profile-image {
+            /* Bỏ position absolute */
+            width: 120px; /* Tăng kích thước ảnh */
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 6px solid var(--background-white); /* Viền trắng dày hơn */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Shadow rõ hơn */
+            flex-shrink: 0; /* Ngăn ảnh bị co lại */
+        }
+
+        .personal-info-text { /* Div mới bao quanh text info nếu cần */
+            flex-grow: 1; /* Cho phép text chiếm không gian còn lại */
+        }
+
+        .personal-info-text p {
+            font-size: 1rem; /* Kích thước chữ thông tin liên hệ */
+            color: var(--text-muted);
+            margin-bottom: var(--space-xs);
+            line-height: 1.5;
+        }
+        .personal-info-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-links {
+            text-align: center; /* Giữ căn giữa cho các link này */
+            margin-bottom: var(--space-xl); /* Tăng khoảng cách dưới */
+            padding-top: var(--space-sm); /* Thêm padding trên */
+        }
+
+        .contact-links p {
+            margin-bottom: 0;
+        }
+
+        .contact-links a {
+            margin: 0 var(--space-md); /* Tăng khoảng cách ngang */
+            font-weight: 600;
+            display: inline-block;
+            padding: var(--space-xs) var(--space-sm); /* Thêm padding */
+            color: var(--primary-color);
+            border-radius: var(--border-radius);
+            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+        }
+        .contact-links a:hover {
+            color: var(--background-white);
+            background-color: var(--secondary-color); /* Đổi background khi hover */
+            text-decoration: none; /* Bỏ gạch chân khi hover link này */
+        }
+
+        /* --- General Sections --- */
+        .section {
+            margin-bottom: var(--space-xl);
+        }
+        .section:last-of-type {
+            margin-bottom: 0;
+        }
+
+        /* --- Section Items (Education, Experience, Projects) --- */
+        .section-item {
+            margin-bottom: var(--space-lg);
+            padding-left: var(--space-lg); /* Tăng padding trái */
+            border-left: 4px solid var(--border-color);
+            transition: border-color var(--transition-speed) ease;
+            position: relative; /* Chuẩn bị cho pseudo-element nếu cần */
+        }
+        .section-item:hover {
+            border-left-color: var(--primary-color); /* Đổi sang màu chính khi hover */
+        }
+        .section-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Có thể thêm hiệu ứng hình tròn nhỏ trên đường kẻ */
+        .section-item::before {
+            content: '';
+            position: absolute;
+            left: -10px; /* Điều chỉnh vị trí */
+            top: 4px; /* Căn chỉnh với dòng text đầu */
+            width: 12px;
+            height: 12px;
+            background-color: var(--background-white);
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            transition: border-color var(--transition-speed) ease;
+        }
+
+        .section-item:hover::before {
+            border-color: var(--primary-color); /* Đồng bộ màu hình tròn */
+        }
+
+        .item-title {
+            font-family: var(--font-headings);
+            font-weight: 600;
+            font-size: 1.25rem; /* Tăng nhẹ kích thước */
+            color: var(--text-color);
+            margin-bottom: var(--space-xs);
+            display: block;
+        }
+        .item-title a { /* Link Github trong project title */
+            font-size: 0.85em;
+            margin-left: var(--space-sm);
+            font-weight: 500;
+            color: var(--secondary-color); /* Màu phụ cho link này */
+            display: inline-block; /* Tránh nhảy dòng */
+        }
+        .item-title a:hover {
+            color: var(--primary-color);
+        }
+
+        .item-subtitle {
+            font-style: normal;
+            font-weight: 500; /* Giảm độ đậm subtitle một chút */
+            color: var(--text-muted);
+            margin-bottom: var(--space-md); /* Tăng khoảng cách dưới */
+            font-size: 1.05rem; /* Tăng nhẹ kích thước */
+        }
+
+        .section-item p:not(.item-title):not(.item-subtitle) {
+            font-size: 1rem; /* Kích thước chuẩn cho mô tả */
+            color: var(--text-color);
+            margin-bottom: var(--space-sm);
+            line-height: 1.7; /* Đảm bảo dễ đọc */
+        }
+
+        /* --- Tag Lists (Skills, Technologies, Hobbies) --- */
+        .tech-list, .hobby-list, .skill-list {
+            list-style: none;
+            padding-left: 0;
+            margin-top: var(--space-md); /* Tăng khoảng cách trên */
+            display: flex; /* Dùng flexbox để các tag xuống dòng đẹp hơn */
+            flex-wrap: wrap;
+            gap: var(--space-sm); /* Khoảng cách giữa các tag */
+        }
+
+        .tech-list li, .hobby-list li, .skill-list li {
+            display: inline-block; /* Giữ lại phòng trường hợp flex không được hỗ trợ */
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+            padding: var(--space-xs) var(--space-md);
+            margin: 0; /* Bỏ margin vì đã có gap */
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid var(--tag-border);
+            transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+            cursor: default;
+        }
+
+        .tech-list li:hover, .hobby-list li:hover, .skill-list li:hover {
+            background-color: var(--primary-color);
+            color: var(--background-white);
+            border-color: var(--primary-color);
+            transform: translateY(-3px); /* Hiệu ứng nhấc lên rõ hơn */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Specific Section Adjustments --- */
+        /* Certifications & Languages: Bỏ viền và hiệu ứng hình tròn */
+        .certifications .section-item,
+        .languages .section-item {
+            border-left: none;
+            padding-left: 0;
+        }
+        .certifications .section-item::before,
+        .languages .section-item::before {
+            display: none; /* Ẩn hình tròn */
+        }
+
+        .certifications .item-title {
+            display: inline;
+            font-size: 1.1rem;
+            margin-right: var(--space-sm);
+            color: var(--text-color);
+            font-weight: 600; /* Đậm hơn chút */
+        }
+        .certifications p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: var(--space-sm); /* Thêm khoảng cách giữa các chứng chỉ */
+        }
+        .certifications p:last-child {
+            margin-bottom: 0;
+        }
+        .certifications p .item-title {
+            color: var(--text-color);
+        }
+
+
+        .languages .section-item {
+            margin-bottom: var(--space-sm);
+        }
+        .languages p {
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+        .languages strong { /* Language name */
+            font-weight: 600;
+            color: var(--text-color);
+            margin-right: var(--space-sm);
+        }
+
+        /* --- Responsiveness --- */
+        @media (max-width: 768px) {
+            html {
+                font-size: 15px;
+            }
+            .container {
+                padding: var(--space-xl);
+            }
+            h1 {
+                font-size: 2.2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .display {
+                flex-direction: column; /* Xếp ảnh trên text */
+                align-items: center; /* Căn giữa ảnh */
+                text-align: center; /* Căn giữa text */
+                gap: var(--space-md);
+            }
+            h1 {
+                text-align: center; /* Căn giữa tên trên mobile */
+            }
+            .profile-image {
+                width: 100px;
+                height: 100px;
+                border-width: 4px;
+            }
+            .contact-links a {
+                margin: 0 var(--space-sm); /* Giảm khoảng cách link */
+            }
+        }
+
+        @media (max-width: 480px) {
+            html {
+                font-size: 14px;
+            }
+            body {
+                padding: var(--space-md) 0;
+            }
+            .container {
+                padding: var(--space-lg);
+                border-top-width: 5px;
+            }
+            h1 {
+                font-size: 1.9rem;
+            }
+            h2 {
+                font-size: 1.35rem;
+                margin-top: var(--space-xl);
+                margin-bottom: var(--space-md);
+            }
+            .section-item {
+                padding-left: var(--space-md); /* Giảm thụt lề */
+                border-left-width: 3px;
+            }
+             .section-item::before { /* Điều chỉnh vị trí chấm tròn mobile */
+                left: -8px;
+                top: 6px;
+                width: 10px;
+                height: 10px;
+                border-width: 2px;
+            }
+            ul:not(.tech-list):not(.hobby-list):not(.skill-list) {
+                padding-left: var(--space-md); /* Giảm thụt lề list */
+            }
+            .contact-links a {
+                margin: 0 var(--space-xs) var(--space-sm); /* Cho phép xuống dòng */
+                font-size: 0.95rem;
+            }
+            .tech-list, .hobby-list, .skill-list {
+                gap: var(--space-xs); /* Giảm khoảng cách tag */
+            }
+            .tech-list li, .hobby-list li, .skill-list li {
+                padding: 3px 10px;
+                font-size: 0.85rem;
+            }
+            .display { /* Giảm khoảng cách header trên mobile nhỏ */
+                 gap: var(--space-sm);
+                 padding-bottom: var(--space-md);
+                 margin-bottom: var(--space-md);
+            }
+        }
+
+        /* --- Print Styles --- */
+        @media print {
+            body {
+                background-color: #fff;
+                color: #000;
+                padding: 0;
+                font-size: 10pt; /* Giảm cỡ chữ in */
+                font-family: 'Times New Roman', Times, serif;
+                line-height: 1.4; /* Giảm line-height in */
+            }
+            .container {
+                max-width: 100%;
+                box-shadow: none;
+                border: none;
+                padding: 1.5cm; /* Tăng lề in */
+            }
+            h1, h2, h3, p, li {
+                color: #000 !important; /* Đảm bảo màu đen */
+            }
+            h2 {
+                font-size: 13pt;
+                border-bottom: 1px solid #999; /* Viền dưới mảnh hơn */
+                padding-bottom: 2mm;
+                margin-top: 1cm;
+                margin-bottom: 0.5cm;
+                page-break-after: avoid;
+            }
+            h1 {
+                font-size: 18pt;
+                text-align: center; /* Căn giữa tên khi in */
+            }
+            .display { /* Bố cục in header */
+                flex-direction: row; /* Giữ lại hàng ngang */
+                justify-content: flex-start; /* Căn trái */
+                align-items: center; /* Căn giữa dọc */
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 0.5cm;
+                margin-bottom: 0.5cm;
+            }
+             .profile-image { /* Ẩn ảnh khi in hoặc làm nhỏ */
+                /* display: none; */ /* Tùy chọn: Ẩn hoàn toàn */
+                width: 3cm; /* Làm nhỏ ảnh */
+                height: 3cm;
+                border: 2px solid #eee;
+                box-shadow: none;
+                margin-right: 1cm; /* Khoảng cách ảnh và text */
+             }
+             .personal-info-text { /* Đảm bảo text không bị đẩy xuống */
+                flex-basis: auto;
+                flex-grow: 1;
+             }
+             .personal-info-text p {
+                 line-height: 1.3;
+                 margin-bottom: 1mm;
+                 color: #000 !important;
+             }
+
+            .contact-links {
+                text-align: center;
+                margin-bottom: 0.5cm;
+                padding-top: 0;
+            }
+            .contact-links a {
+                margin: 0 5px;
+                padding: 1px 3px;
+                color: #000 !important;
+                text-decoration: none;
+                font-weight: normal;
+                background-color: transparent !important; /* Bỏ background hover */
+            }
+            /* Hiển thị URL khi in (bỏ comment nếu muốn) */
+            /*
+            a[href^="http"]::after {
+                content: " [" attr(href) "]";
+                font-size: 8pt;
+                color: #555;
+                word-break: break-all;
+            }
+            a[href^="mailto"]::after {
+                 content: " [" attr(href) "]";
+                 font-size: 8pt;
+                 color: #555;
+            }
+            */
+
+            .section {
+                margin-bottom: 0.8cm;
+            }
+            .section-item {
+                border-left: none;
+                padding-left: 0;
+                margin-bottom: 0.4cm;
+                page-break-inside: avoid;
+            }
+             .section-item::before { /* Ẩn chấm tròn khi in */
+                display: none;
+            }
+
+            .item-title { font-size: 11pt; font-weight: bold; }
+            .item-subtitle { font-size: 10pt; font-style: italic; color: #333 !important; margin-bottom: 2mm; }
+            .section-item p:not(.item-title):not(.item-subtitle) { font-size: 10pt; margin-bottom: 1mm; }
+
+            ul:not(.tech-list):not(.hobby-list):not(.skill-list) {
+                list-style: disc;
+                padding-left: 5mm; /* Thụt lề list in */
+                margin-top: 1mm;
+            }
+             ul:not(.tech-list):not(.hobby-list):not(.skill-list) li {
+                margin-bottom: 1mm;
+                font-size: 10pt;
+            }
+
+            .tech-list, .hobby-list, .skill-list {
+                list-style: none;
+                padding-left: 0;
+                margin-top: 2mm;
+                display: block; /* Hiển thị dạng block khi in */
+            }
+            .tech-list li, .hobby-list li, .skill-list li {
+                display: inline; /* Hiển thị inline */
+                background-color: transparent !important; /* Bỏ nền tag */
+                color: #000 !important;
+                border: none; /* Bỏ viền tag */
+                padding: 0;
+                margin: 0 3mm 1mm 0; /* Khoảng cách giữa các tag */
+                font-size: 9pt;
+                border-radius: 0;
+                transform: none;
+                box-shadow: none;
+            }
+            /* Thêm dấu phẩy giữa các tag khi in */
+            .tech-list li:not(:last-child)::after,
+            .hobby-list li:not(:last-child)::after,
+            .skill-list li:not(:last-child)::after {
+                content: ", ";
+                white-space: pre; /* Giữ khoảng trắng */
+            }
+
+            .certifications p, .languages p {
+                font-size: 10pt;
+                margin-bottom: 1mm;
+            }
+             .certifications .item-title { font-size: 10pt; font-weight: bold; }
+             .languages strong { font-weight: bold; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="display">
+             <img src="{{personalInfo.profileImageUrl}}" alt="Ảnh đại diện" class="profile-image">
+
+            <div class="personal-info-text"> <h1>{{personalInfo.name}}</h1>
+                <p>{{personalInfo.email}} | {{personalInfo.phone}}</p>
+                <p>{{personalInfo.address}}</p>
+            </div>
+        </div>
+
+        <div class="contact-links section"> <p>
+                {{#if personalInfo.linkedin}}<a href="{{personalInfo.linkedin}}" target="_blank">LinkedIn</a>{{/if}}
+                {{#if personalInfo.github}}<a href="{{personalInfo.github}}" target="_blank">GitHub</a>{{/if}}
+                {{#if personalInfo.portfolio}}<a href="{{personalInfo.portfolio}}" target="_blank">Portfolio</a>{{/if}}
+                </p>
+        </div>
+
+        {{#if education}}
+        <div class="section education">
+            <h2>Học vấn</h2>
+            {{#each education}}
+            <div class="section-item">
+                <p class="item-title">{{degree}}</p>
+                <p class="item-subtitle">{{school}} ({{year}})</p>
+                {{#if gpa}}<p>GPA: {{gpa}}</p>{{/if}}
+                {{#if relevantCourses}}
+                <p>Các môn học liên quan:</p>
+                <ul>
+                    {{#each relevantCourses}}<li>{{this}}</li>{{/each}}
+                </ul>
+                {{/if}}
+            </div>
+            {{/each}}
+             </div>
+        {{/if}}
+
+        {{#if experience}}
+        <div class="section experience">
+            <h2>Kinh nghiệm làm việc</h2>
+            {{#each experience}}
+            <div class="section-item">
+                <p class="item-title">{{title}}</p>
+                <p class="item-subtitle">{{company}} ({{duration}})</p>
+                <p>{{description}}</p>
+                {{#if technologies}}
+                <p>Công nghệ sử dụng:</p>
+                <ul class="tech-list">
+                    {{#each technologies}}<li>{{this}}</li>{{/each}}
+                </ul>
+                {{/if}}
+            </div>
+            {{/each}}
+            </div>
+        {{/if}}
+
+         {{#if projects}}
+        <div class="section projects">
+            <h2>Dự án cá nhân</h2>
+            {{#each projects}}
+            <div class="section-item">
+                 <p class="item-title">{{name}} {{#if github}}(<a href="{{github}}" target="_blank">GitHub</a>){{/if}}</p>
+                <p>{{description}}</p>
+                {{#if technologies}}
+                <p>Công nghệ sử dụng:</p>
+                <ul class="tech-list">
+                    {{#each technologies}}<li>{{this}}</li>{{/each}}
+                </ul>
+                {{/if}}
+            </div>
+            {{/each}}
+             </div>
+        {{/if}}
+
+        {{#if skills}}
+        <div class="section skills">
+            <h2>Kỹ năng</h2>
+            <ul class="skill-list">
+                {{#each skills}}
+                <li>{{this}}</li>
+                {{/each}}
+                </ul>
+        </div>
+        {{/if}}
+
+        {{#if certifications}}
+        <div class="section certifications">
+            <h2>Chứng chỉ</h2>
+            {{#each certifications}}
+            <div class="section-item">
+                 <p><span class="item-title">{{name}}</span> ({{year}}) - {{issuer}}</p>
+            </div>
+            {{/each}}
+             </div>
+        {{/if}}
+
+        {{#if languages}}
+        <div class="section languages">
+            <h2>Ngôn ngữ</h2>
+            {{#each languages}}
+            <div class="section-item">
+                <p><strong>{{language}}:</strong> {{level}}</p>
+            </div>
+            {{/each}}
+             </div>
+        {{/if}}
+
+        {{#if hobbies}}
+        <div class="section hobbies">
+            <h2>Sở thích</h2>
+            <ul class="hobby-list">
+                {{#each hobbies}}
+                <li>{{this}}</li>
+                {{/each}}
+                 </ul>
+        </div>
+        {{/if}}
+
+    </div>
+</body>
+</html>

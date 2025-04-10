@@ -99,7 +99,7 @@ const cvData = {
 };
 // --------------------------
 
-const templatePath = path.join(__dirname, "cv_template.hbs");
+const templatePath = path.join(__dirname, "cv_templatev1.hbs");
 const outputDir = path.join(__dirname, "output"); // Thư mục lưu PDF
 const outputPdfPath = path.join(
   outputDir,
@@ -108,7 +108,7 @@ const outputPdfPath = path.join(
 
 module.exports = {
     // generatePdf: async function (cvData, templatePath) { 
-    generatePdf: async function () { 
+    generatePdf: async function (cvData) { 
         let browser; // Khai báo để có thể đóng nếu lỗi
         try {
             console.log("Đang đọc template...");

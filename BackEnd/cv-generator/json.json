@@ -1,0 +1,84 @@
+{
+    "personalInfo": {
+      "name": "Nguyễn Văn A",
+      "email": "nva@example.com",
+      "phone": "0123456789",
+      "address": "123 Đường ABC, Quận XYZ, TP HCM",
+      "linkedin": "https://www.linkedin.com/in/nguyenvana",
+      "github": "https://github.com/nguyenvana",
+      "portfolio": "https://nguyenvana.dev"
+    },
+    "education": [
+      {
+        "degree": "Cử nhân Công nghệ Thông tin",
+        "school": "Đại học B",
+        "year": "2015 - 2019",
+        "gpa": 3.7,
+        "relevantCourses": ["Lập trình Web", "Cơ sở dữ liệu", "Trí tuệ nhân tạo"]
+      }
+    ],
+    "experience": [
+      {
+        "title": "Lập trình viên Backend",
+        "company": "Công ty C",
+        "duration": "2019 - Hiện tại",
+        "description": "Phát triển và bảo trì API sử dụng Node.js và MongoDB. Tối ưu hóa hiệu suất hệ thống.",
+        "technologies": ["Node.js", "Express.js", "MongoDB", "Redis"]
+      },
+      {
+        "title": "Thực tập sinh lập trình",
+        "company": "Công ty D",
+        "duration": "2018 - 2019",
+        "description": "Hỗ trợ phát triển các module nhỏ trong dự án. Viết tài liệu kỹ thuật.",
+        "technologies": ["JavaScript", "MySQL", "REST API"]
+      }
+    ],
+    "projects": [
+      {
+        "name": "Ứng dụng Quản lý Công việc",
+        "description": "Xây dựng ứng dụng giúp người dùng quản lý công việc cá nhân, có tính năng thêm, sửa, xóa và sắp xếp công việc.",
+        "technologies": ["React", "Node.js", "MongoDB"],
+        "github": "https://github.com/nguyenvana/task-manager"
+      },
+      {
+        "name": "Hệ thống Đặt Phòng Khách Sạn",
+        "description": "Phát triển hệ thống đặt phòng khách sạn trực tuyến, tích hợp cổng thanh toán.",
+        "technologies": ["Vue.js", "Firebase", "Cloud Functions"],
+        "github": "https://github.com/nguyenvana/hotel-booking"
+      }
+    ],
+    "skills": [
+      "Node.js",
+      "JavaScript",
+      "MongoDB",
+      "API Design",
+      "RESTful API",
+      "GraphQL",
+      "Docker",
+      "AWS"
+    ],
+    "certifications": [
+      {
+        "name": "AWS Certified Solutions Architect",
+        "year": "2022",
+        "issuer": "Amazon Web Services"
+      },
+      {
+        "name": "Node.js Developer Certification",
+        "year": "2021",
+        "issuer": "OpenJS Foundation"
+      }
+    ],
+    "languages": [
+      {
+        "language": "Tiếng Việt",
+        "level": "Bản ngữ"
+      },
+      {
+        "language": "Tiếng Anh",
+        "level": "Trung cấp (Intermediate)"
+      }
+    ],
+    "hobbies": ["Đọc sách", "Chơi cờ vua", "Du lịch", "Lập trình các dự án cá nhân"]
+  }
+  
