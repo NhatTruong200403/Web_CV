@@ -1,0 +1,21 @@
+/* src/components/Footer.module.css */
+.footer {
+    /* Thêm margin-top để không bị dính vào content nếu cần */
+     margin-top: 3rem;
+     border-top: 1px solid #dee2e6; /* Thêm đường kẻ nhẹ phân cách */
+}
+
+.footer a {
+    text-decoration: none;
+}
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* CSS cho icon social media */
+.footer section div a svg {
+    transition: color 0.2s ease-in-out;
+}
+.footer section div a:hover svg {
+    color: #0d6efd !important; /* Màu primary khi hover */
+}
