@@ -52,15 +52,16 @@ function uploadUserCV(cvFile) {
     });
 }
 
-// GET /users/applies
 function getUserApplies() {
-    // Assuming backend uses logged-in user context
-    return axios.get("/users/applies");
+    // Backend route /users/applies trả về thông tin user hiện tại (đã auth)
+    // đã bao gồm mảng appliJobs (chứa các ID) - Note: Actually populates details
+    return axios.get("/users/applies"); // Makes a GET request to the backend route
 }
 
 // GET /users/cv (Assuming this initiates generation and returns URL)
-function generateAndUploadCV() {
-    return axios.get("/users/cv");
+function generateCvFromData(cvData) {
+    // Endpoint này bạn cần tự định nghĩa và xây dựng ở backend
+    return axios.post("/users/cv", cvData);
 }
 
 // DELETE /users/:id (Assuming Admin only)
@@ -69,4 +70,4 @@ function deleteUser(userId) {
 }
 
 
-export { login, signup, upCompany, getMe, getCompanyIdByUser, updateUser, uploadAvatar, uploadUserCV, getUserApplies, generateAndUploadCV, deleteUser }
+export { login, signup, upCompany, getMe, getCompanyIdByUser, updateUser, uploadAvatar, uploadUserCV, getUserApplies, generateCvFromData, deleteUser }

@@ -169,39 +169,6 @@ function UserProfile() {
          }
      };
 
-     // Hàm xử lý Tạo và Tải lên CV tự động (GET /users/cv)
-     const handleGenerateCv = async () => {
-        setGeneratingCv(true);
-        try {
-            const response = await generateAndUploadCV(); // Gọi API generate CV
-            toast.success('Tạo và tải lên CV tự động thành công!');
-    
-            // ===>>> THAY ĐỔI Ở ĐÂY <<<===
-            // Cập nhật link CV mới vào state formData để hiển thị ngay lập tức
-            if (response.data?.pdfUrl) {
-                // Cập nhật state để UI hiển thị link mới ngay
-                setFormData(prevFormData => ({
-                    ...prevFormData,
-                    cvUrl: response.data.pdfUrl
-                }));
-                // Lưu ý: Thay đổi này chỉ cập nhật UI tạm thời.
-                // Để lưu vĩnh viễn, backend cần cập nhật DB,
-                // hoặc bạn có thể gọi thêm API updateUser ở đây (nếu API cho phép cập nhật cvFile).
-            } else {
-                 // Nếu API không trả về pdfUrl, vẫn fetch lại user phòng trường hợp khác
-                 fetchUser();
-            }
-            // ===>>> KẾT THÚC THAY ĐỔI <<<===
-    
-        } catch (err) {
-             toast.error(err.response?.data?.message ||'Tạo CV tự động thất bại.');
-             console.error("Lỗi generate CV:", err);
-        } finally {
-            setGeneratingCv(false);
-        }
-    };
-
-
     if (loading) return <div className="text-center my-5"><Spinner animation="border" /></div>;
     if (error) return <Alert variant="danger">{error}</Alert>;
     if (!user) return <Alert variant="warning">Không tìm thấy dữ liệu người dùng.</Alert>;
@@ -266,15 +233,6 @@ function UserProfile() {
                             >
                                 {uploadingCv ? <Spinner as="span" animation="border" size="sm" /> : 'Tải lên CV'}
                             </Button>
-                            {/* Tạo CV tự động */}
-                            <Button
-                                variant="outline-success"
-                                size="sm"
-                                onClick={handleGenerateCv}
-                                disabled={generatingCv}
-                            >
-                               {generatingCv ? <Spinner as="span" animation="border" size="sm" /> : 'Tạo CV tự động'}
-                            </Button>
                          </Card.Body>
                      </Card>
                 </Col>
@@ -320,36 +278,6 @@ function UserProfile() {
                                         onChange={handleChange}
                                     />
                                 </Form.Group>
-
-                                {/* Các trường chỉ hiển thị, không cập nhật qua form này */}
-                                <Form.Group className="mb-3" controlId="formFullName">
-                                    <Form.Label>Họ và tên</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        name="fullName"
-                                        value={formData.fullName}
-                                        readOnly // Đánh dấu chỉ đọc vì không cập nhật qua API này
-                                        disabled
-                                        className="bg-light"
-                                    />
-                                    <Form.Text muted>Không thể cập nhật họ tên tại đây.</Form.Text>
-                                </Form.Group>
-
-
-                                <Form.Group className="mb-3" controlId="formAddress">
-                                    <Form.Label>Địa chỉ</Form.Label>
-                                    <Form.Control
-                                        as="textarea"
-                                        rows={2}
-                                        name="address"
-                                        value={formData.address}
-                                        readOnly // Đánh dấu chỉ đọc
-                                        disabled
-                                        className="bg-light"
-                                    />
-                                     <Form.Text muted>Không thể cập nhật địa chỉ tại đây.</Form.Text>
-                                </Form.Group>
-                                {/* Kết thúc trường chỉ hiển thị */}
 
                                 <Button
                                     variant="primary"

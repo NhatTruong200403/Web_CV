@@ -6,6 +6,7 @@ import { useAuth } from "../provider/AuthProvider";
 // User Components
 import UserProfile from "../components/User/UserProfile";
 import UserApplications from "../components/User/UserApplications";
+import ManageCv from "../components/User/ManageCV";
 
 // Company Components
 import CompanyJobList from "../components/Company/CompanyJobList";
@@ -74,6 +75,10 @@ const AppRoutes = () => {
              <Route
                 path="/my-applications"
                 element={<ProtectedUserRoute><UserApplications /></ProtectedUserRoute>}
+            />
+            <Route
+                path="/manage-cv"
+                element={<ProtectedUserRoute><ManageCv /></ProtectedUserRoute>}
             />
              {/* Các route khác chỉ User mới thấy */}
 

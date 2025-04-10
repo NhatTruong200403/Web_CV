@@ -18,4 +18,9 @@ function updateJobInfo(id, data) {
 function deletePost(id) {
     return axios.delete(`jobs/${id}`)
 }
-export { getAllJobs, getJobById, createJob, updateJobInfo, deletePost }
+
+function applyJob(jobId) {
+    return axios.post(`jobs/apply/${jobId}`);
+}
+
+export { getAllJobs, getJobById, createJob, updateJobInfo, deletePost , applyJob }

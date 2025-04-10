@@ -6,7 +6,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 // Icons
 import {
     FaSignInAlt, FaUserPlus, FaBuilding, FaPlusCircle, FaSignOutAlt,
-    FaUserCircle, FaFileAlt, FaUserEdit, FaListAlt
+    FaUserCircle, FaFileAlt, FaUserEdit, FaListAlt , FaFileInvoice
 } from 'react-icons/fa';
 // Modals
 import RegisterModal from './RegisterModal';
@@ -60,6 +60,11 @@ function Header() {
                                     Bài đăng cá nhân
                                 </Nav.Link>
                             )}
+                            {auth.isAuthenticated && auth.role === 'User' && (
+                                <Nav.Link as={NavLink} to="/manage-cv">
+                                    Quản lý CV
+                                </Nav.Link>
+                            )}
                         </Nav>
 
                         {/* User Authentication / Actions */}
@@ -96,9 +101,6 @@ function Header() {
                                             <NavDropdown.Item as={NavLink} to="/profile">
                                                 <FaUserEdit className="me-2" />Thông tin cá nhân
                                             </NavDropdown.Item>
-                                            <NavDropdown.Item as={NavLink} to="/my-applications">
-                                                <FaListAlt className="me-2" />Việc làm đã ứng tuyển
-                                            </NavDropdown.Item>
                                         </>
                                     )}
 
@@ -109,6 +111,13 @@ function Header() {
                                             <FaBuilding className="me-2" /> Đăng ký công ty
                                         </NavDropdown.Item>
                                     )}
+
+                                    {auth.role === 'User' && (
+                                        <NavDropdown.Item as={NavLink} to="/my-applications">
+                                        <FaListAlt className="me-2" />Việc làm đã ứng tuyển
+                                        </NavDropdown.Item>
+                                    )}
+                                    
 
                                     {/* Chỉ Company thấy */}
                                     {auth.role === 'Company' && (
