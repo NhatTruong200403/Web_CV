@@ -186,6 +186,9 @@ module.exports = {
     if (user.authProvider === "google") {
       throw new Error("Tài khoản này chỉ hỗ trợ đăng nhập qua Google");
     }
+    if (user.isDeleted) {
+      throw new Error("Tài khoản này đã bị xóa");
+    }
     if (!user) {
       throw new Error("Username hoac password khong dung");
     } else {

@@ -21,7 +21,6 @@ const jobSchema = new mongoose.Schema(
       },
       required: true,
     },
-    // Thêm trường ứng viên (applicants)
     applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 
 
@@ -31,13 +30,12 @@ const jobSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// 🔥 Danh sách các trường cho phép cập nhật
+
 const allowFields = [
   "title", "jobApplyPositionId", "details", "benefits",
   "descriptions", "requirements", "location", "degree", "salary", "jobType", "status"
 ];
 
-// 🔥 Hàm cập nhật chỉ các trường được phép
 jobSchema.methods.updateAllowedFields = function (newData) {
   for (let field of allowFields) {
     if (newData[field] !== undefined) {

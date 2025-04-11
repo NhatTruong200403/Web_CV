@@ -5,7 +5,6 @@ module.exports = {
 
   GetAllRoles: async function () {
     try {
-      // Thêm điều kiện lọc isDeleted nếu bạn sử dụng soft delete cho roles
       return await RoleModel.find({ $or: [{ isDeleted: false }, { isDeleted: { $exists: false } }] });
     } catch (error) {
       console.error("Error in GetAllRoles:", error);

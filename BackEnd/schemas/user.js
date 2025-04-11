@@ -24,10 +24,8 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// 🔥 Danh sách các trường cho phép cập nhật
 const allowFields = ["email", "username", "avatarUrl", "cvFile", "phonenumber"];
 
-// 🔐 Hash mật khẩu trước khi lưu
 userSchema.pre("save", function (next) {
   if (this.isModified("password")) {
     let salt = bcrypt.genSaltSync(10);
@@ -36,7 +34,6 @@ userSchema.pre("save", function (next) {
   next();
 });
 
-// 🔥 Hàm cập nhật chỉ các trường được phép
 userSchema.methods.updateAllowedFields = async function (newData) {
   for (let field of allowFields) {
     if (newData[field] !== undefined) {

@@ -1,16 +1,13 @@
-// controllers/jobTypes.js
-const mongoose = require('mongoose'); // <--- THÊM DÒNG NÀY
-const JobType = require('../schemas/job_Types'); // Đảm bảo đường dẫn này đúng
+const mongoose = require('mongoose');
+const JobType = require('../schemas/job_Types');
 
-// --- Các hàm đã có ---
 const GetAllJobTypes = async () => {
     return await JobType.find({}).sort({ name: 1 });
 };
 
 const GetJobTypeById = async (id) => {
-    // Giờ đây mongoose đã được định nghĩa
     if (!mongoose.Types.ObjectId.isValid(id)) {
-         throw new Error("Invalid Job Type ID format"); // Sửa message lỗi cho rõ hơn
+         throw new Error("Invalid Job Type ID format"); 
     }
     return await JobType.findById(id);
 };
@@ -30,9 +27,8 @@ const CreateJobType = async (name, description = '') => {
 };
 
 const UpdateJobType = async (id, data) => {
-     // Giờ đây mongoose đã được định nghĩa
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        throw new Error("Invalid Job Type ID format"); // Sửa message lỗi
+        throw new Error("Invalid Job Type ID format");
     }
     if (!data || !data.name || data.name.trim() === "") {
         throw new Error("Job Type name is required for update");
@@ -55,7 +51,7 @@ const UpdateJobType = async (id, data) => {
 };
 
 const DeleteJobType = async (id) => {
-    try { // Giữ lại try...catch bên trong nếu muốn debug thêm
+    try { 
         console.log("Calling JobType.findByIdAndDelete...");
         const result = await JobType.findByIdAndUpdate(id,{
             isDeleted: true,
