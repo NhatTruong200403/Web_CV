@@ -1,25 +1,21 @@
-// src/components/Admin/CreateJobTypeModal.js
 import React, { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { createJobType } from '../../services/JobTypeService';
 import { toast } from 'react-toastify';
 
 function CreateJobTypeModal({ show, handleClose, refreshJobTypes }) {
-    // Thêm state cho description
     const [formData, setFormData] = useState({ name: '', description: '' });
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        // Cập nhật state formData
         setFormData(prev => ({ ...prev, [name]: value }));
         if (error) setError('');
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        // Kiểm tra name
         if (!formData.name.trim()) {
             setError('Tên loại công việc không được để trống.');
             return;
@@ -28,7 +24,6 @@ function CreateJobTypeModal({ show, handleClose, refreshJobTypes }) {
         setError('');
 
         try {
-            // Truyền cả name và description từ formData
             await createJobType(formData);
             toast.success('Tạo loại công việc thành công!');
             refreshJobTypes();
@@ -48,7 +43,6 @@ function CreateJobTypeModal({ show, handleClose, refreshJobTypes }) {
     };
 
     const handleModalClose = () => {
-        // Reset cả name và description
         setFormData({ name: '', description: '' });
         setError('');
         setIsSubmitting(false);
@@ -80,16 +74,15 @@ function CreateJobTypeModal({ show, handleClose, refreshJobTypes }) {
                         </Form.Control.Feedback>
                     </Form.Group>
 
-                    {/* Thêm lại Form Group cho Description */}
-                    <Form.Group className="mb-3" controlId="formJobTypeDescriptionCreate"> {/* Đổi ID */}
+                    <Form.Group className="mb-3" controlId="formJobTypeDescriptionCreate">
                         <Form.Label>Mô tả</Form.Label>
                         <Form.Control
                             as="textarea"
-                            name="description" // Thêm name attribute
+                            name="description"
                             rows={2}
                             placeholder="Mô tả ngắn gọn (ví dụ: Làm việc toàn thời gian)"
                             value={formData.description}
-                            onChange={handleInputChange} // Dùng chung handleInputChange
+                            onChange={handleInputChange}
                         />
                     </Form.Group>
 
@@ -98,7 +91,6 @@ function CreateJobTypeModal({ show, handleClose, refreshJobTypes }) {
                     <Button variant="secondary" onClick={handleModalClose} disabled={isSubmitting}>
                         Hủy
                     </Button>
-                    {/* Disable nút lưu nếu tên rỗng */}
                     <Button variant="primary" type="submit" disabled={isSubmitting || !formData.name.trim()}>
                         {isSubmitting ? 'Đang lưu...' : 'Lưu'}
                     </Button>

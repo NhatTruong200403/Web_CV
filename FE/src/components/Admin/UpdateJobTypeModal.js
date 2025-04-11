@@ -6,11 +6,10 @@ import { toast } from 'react-toastify';
 
 function UpdateJobTypeModal({ show, handleClose, jobTypeToUpdate, refreshJobTypes }) {
     const [formData, setFormData] = useState({ name: '', description: '' });
-    const [initialData, setInitialData] = useState({ name: '', description: '' }); // Lưu trạng thái ban đầu
+    const [initialData, setInitialData] = useState({ name: '', description: '' });
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Cập nhật form khi jobTypeToUpdate thay đổi
     useEffect(() => {
         if (jobTypeToUpdate) {
             const data = {
@@ -18,7 +17,7 @@ function UpdateJobTypeModal({ show, handleClose, jobTypeToUpdate, refreshJobType
                 description: jobTypeToUpdate.description || ''
             };
             setFormData(data);
-            setInitialData(data); // Lưu trạng thái ban đầu khi mở modal
+            setInitialData(data);
             setError('');
         }
     }, [jobTypeToUpdate]);
@@ -36,9 +35,8 @@ function UpdateJobTypeModal({ show, handleClose, jobTypeToUpdate, refreshJobType
             return;
         }
 
-        // Kiểm tra xem có thay đổi không
         if (formData.name.trim() === initialData.name && formData.description === initialData.description) {
-            handleModalClose(); // Không có gì thay đổi, đóng modal
+            handleModalClose(); 
             return;
         }
 
@@ -100,7 +98,7 @@ function UpdateJobTypeModal({ show, handleClose, jobTypeToUpdate, refreshJobType
                         <Form.Label>Mô tả</Form.Label>
                         <Form.Control
                             as="textarea"
-                            name="description" // Thêm name attribute
+                            name="description"
                             rows={2}
                             placeholder="Mô tả ngắn gọn (ví dụ: Làm việc toàn thời gian)"
                             value={formData.description}

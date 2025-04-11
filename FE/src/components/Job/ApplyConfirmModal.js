@@ -1,4 +1,3 @@
-// src/components/Job/ApplyConfirmModal.js
 import React, { useState } from 'react';
 import { Modal, Button, Alert, Spinner } from 'react-bootstrap';
 
@@ -13,8 +12,7 @@ function ApplyConfirmModal({ show, handleClose, handleConfirm, jobTitle, company
                 {error && <Alert variant="danger" className="small">{error}</Alert>}
                 <p>Bạn có chắc chắn muốn ứng tuyển vào vị trí:</p>
                 <p><strong>{jobTitle}</strong> tại <strong>{companyName}</strong>?</p>
-                {/* Thêm lưu ý nếu cần */}
-                {/* <p className="text-muted small">Hồ sơ CV đã tải lên gần nhất của bạn sẽ được sử dụng.</p> */}
+                
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose} disabled={isLoading}>

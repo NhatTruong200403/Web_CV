@@ -1,4 +1,3 @@
-// src/components/Admin/DeleteJobTypeModal.js
 import React, { useState } from 'react';
 import { Modal, Button, Alert } from 'react-bootstrap';
 import { deleteJobType } from '../../services/JobTypeService';
@@ -21,8 +20,7 @@ function DeleteJobTypeModal({ show, handleClose, jobTypeToDelete, refreshJobType
         } catch (err) {
              console.error("Error deleting job type:", err);
              const errorMsg = err.response?.data?.message || err.message || 'Đã xảy ra lỗi khi xóa.';
-             // Xử lý lỗi cụ thể nếu backend trả về (ví dụ: lỗi đang được sử dụng)
-             // if (errorMsg.includes("in use")) { ... }
+            
              setError(errorMsg);
              toast.error(`Xóa thất bại: ${errorMsg}`);
         } finally {
@@ -49,8 +47,6 @@ function DeleteJobTypeModal({ show, handleClose, jobTypeToDelete, refreshJobType
                  <p><strong>{jobTypeToDelete.name}</strong></p>
                  {jobTypeToDelete.description && <p className="text-muted small">{jobTypeToDelete.description}</p>}
                 <p className="text-danger mt-3">Hành động này không thể hoàn tác.</p>
-                 {/* Thêm cảnh báo nếu cần */}
-                 {/* <p className="text-warning">Lưu ý: Xóa loại công việc có thể ảnh hưởng đến các bài đăng đang sử dụng nó.</p> */}
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={handleModalClose} disabled={isDeleting}>

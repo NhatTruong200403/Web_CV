@@ -1,4 +1,3 @@
-// src/components/Admin/ManageRoles.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { Table, Button, Spinner, Alert, Container, Row, Col } from 'react-bootstrap';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
@@ -13,39 +12,34 @@ function ManageRoles() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // State cho Modals
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    // State để truyền dữ liệu vào Modals
     const [roleToUpdate, setRoleToUpdate] = useState(null);
     const [roleToDelete, setRoleToDelete] = useState(null);
 
-    // Hàm fetch roles
     const fetchRoles = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
             const response = await getAllRoles();
-            setRoles(response.data || []); // Đảm bảo roles là mảng
+            setRoles(response.data || []);
         } catch (err) {
             console.error("Error fetching roles:", err);
             const errorMsg = err.response?.data?.message || err.message || "Không thể tải danh sách vai trò.";
             setError(errorMsg);
             toast.error(`Lỗi: ${errorMsg}`);
-            setRoles([]); // Đặt lại roles thành mảng rỗng khi có lỗi
+            setRoles([]);
         } finally {
             setLoading(false);
         }
     }, []);
 
-    // Fetch roles khi component mount lần đầu
     useEffect(() => {
         fetchRoles();
     }, [fetchRoles]);
 
-    // Hàm xử lý mở các modal
     const handleShowCreateModal = () => setShowCreateModal(true);
     const handleShowUpdateModal = (role) => {
         setRoleToUpdate(role);
@@ -60,11 +54,11 @@ function ManageRoles() {
     const handleCloseCreateModal = () => setShowCreateModal(false);
     const handleCloseUpdateModal = () => {
         setShowUpdateModal(false);
-        setRoleToUpdate(null); // Reset role đang chọn
+        setRoleToUpdate(null);
     };
     const handleCloseDeleteModal = () => {
         setShowDeleteModal(false);
-        setRoleToDelete(null); // Reset role đang chọn
+        setRoleToDelete(null); 
     };
 
 
@@ -123,7 +117,6 @@ function ManageRoles() {
                                         >
                                             <FaEdit />
                                         </Button>
-                                        {/* Không cho xóa role Admin, User, Company (nếu có ID/tên cố định) */}
                                         {(role.name !== 'Admin' && role.name !== 'User' && role.name !== 'Company') && (
                                              <Button
                                                 variant="outline-danger"
@@ -145,11 +138,10 @@ function ManageRoles() {
                  )
             )}
 
-            {/* Modals */}
             <CreateRoleModal
                 show={showCreateModal}
                 handleClose={handleCloseCreateModal}
-                refreshRoles={fetchRoles} // Truyền hàm fetchRoles để reload list
+                refreshRoles={fetchRoles}
             />
             <UpdateRoleModal
                 show={showUpdateModal}

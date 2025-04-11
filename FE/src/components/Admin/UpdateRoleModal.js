@@ -6,11 +6,10 @@ import { toast } from 'react-toastify';
 
 function UpdateRoleModal({ show, handleClose, roleToUpdate, refreshRoles }) {
     const [roleName, setRoleName] = useState('');
-    const [initialRoleName, setInitialRoleName] = useState(''); // Lưu tên ban đầu để so sánh
+    const [initialRoleName, setInitialRoleName] = useState(''); 
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Cập nhật state khi roleToUpdate thay đổi (khi modal được mở với role khác)
     useEffect(() => {
         if (roleToUpdate) {
             setRoleName(roleToUpdate.name);
@@ -30,7 +29,6 @@ function UpdateRoleModal({ show, handleClose, roleToUpdate, refreshRoles }) {
             setError('Tên vai trò không được để trống.');
             return;
         }
-        // Nếu tên không thay đổi thì không cần gọi API
         if (roleName.trim() === initialRoleName) {
             handleModalClose();
             return;
@@ -47,10 +45,10 @@ function UpdateRoleModal({ show, handleClose, roleToUpdate, refreshRoles }) {
         } catch (err) {
             console.error("Error updating role:", err);
              const errorMsg = err.response?.data?.message || err.message || 'Đã xảy ra lỗi khi cập nhật vai trò.';
-             if (err.response?.status === 409) { // Conflict - Role name exists
+             if (err.response?.status === 409) { 
                 setError('Tên vai trò này đã tồn tại.');
              } else {
-                setError(errorMsg); // Hiển thị lỗi chung
+                setError(errorMsg);
              }
             toast.error(`Cập nhật vai trò thất bại: ${errorMsg}`);
         } finally {
@@ -59,13 +57,11 @@ function UpdateRoleModal({ show, handleClose, roleToUpdate, refreshRoles }) {
     };
 
     const handleModalClose = () => {
-        // Không reset roleName ở đây vì useEffect sẽ xử lý khi props thay đổi
         setError('');
         setIsSubmitting(false);
         handleClose();
     };
 
-    // Không render modal nếu không có roleToUpdate
     if (!roleToUpdate) return null;
 
     return (

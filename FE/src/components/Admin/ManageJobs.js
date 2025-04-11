@@ -1,11 +1,7 @@
-// src/components/Admin/ManageJobs.js
 import React, { useState, useEffect, useCallback } from 'react';
-// Thêm lại Modal, Button
 import { Table, Button, Spinner, Alert, Container, Row, Col, Modal } from 'react-bootstrap';
-// Thêm lại FaEye
 import { FaEye } from 'react-icons/fa';
 import { getAllJobs } from '../../services/JobService';
-// Thêm lại JobDetail
 import JobDetail from '../Job/JobDetail';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
@@ -15,17 +11,15 @@ function ManageJobs() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Thêm lại state cho Modal chi tiết
     const [showDetailModal, setShowDetailModal] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
 
-    // Hàm fetch jobs giữ nguyên
     const fetchJobs = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
             const response = await getAllJobs();
-            const activeJobs = (response.data || []).filter(job => !job.isDeleted); // Vẫn chỉ hiện job active
+            const activeJobs = (response.data || []).filter(job => !job.isDeleted);
             const sortedJobs = activeJobs.sort((a, b) =>
                 new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
             );
@@ -41,14 +35,11 @@ function ManageJobs() {
         }
     }, []);
 
-    // Fetch jobs khi mount
     useEffect(() => {
         fetchJobs();
     }, [fetchJobs]);
 
-    // Bỏ useEffect lọc jobs nếu không có search/filter
 
-    // ---- Thêm lại hàm xử lý Modal chi tiết ----
     const handleShowDetail = (job) => {
         setSelectedJob(job);
         setShowDetailModal(true);
@@ -58,7 +49,6 @@ function ManageJobs() {
         setShowDetailModal(false);
         setSelectedJob(null);
     };
-    // ---- Kết thúc hàm xử lý Modal ----
 
     return (
         <Container fluid className="mt-4">
@@ -68,7 +58,6 @@ function ManageJobs() {
                 </Col>
             </Row>
 
-            {/* Loading and Error States */}
             {loading && (
                 <div className="text-center my-5">
                     <Spinner animation="border" role="status"><span className="visually-hidden">Loading...</span></Spinner>
@@ -82,7 +71,7 @@ function ManageJobs() {
             {/* Jobs Table */}
             {!loading && !error && (
                 jobs.length > 0 ? (
-                    <Table striped bordered hover responsive size="sm"> {/* Thêm lại responsive và size="sm" nếu muốn */}
+                    <Table striped bordered hover responsive size="sm">
                         <thead className="table-dark">
                             <tr>
                                 <th>#</th>
@@ -90,7 +79,7 @@ function ManageJobs() {
                                 <th>Công ty</th>
                                 <th>Địa điểm</th>
                                 <th>Ngày tạo</th>
-                                <th>Hành động</th> {/* Thêm lại cột Hành động */}
+                                <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -103,9 +92,7 @@ function ManageJobs() {
                                     <td>
                                         {job.createdAt ? format(new Date(job.createdAt), 'dd/MM/yyyy HH:mm') : 'N/A'}
                                     </td>
-                                    {/* Thêm lại cột Hành động */}
                                     <td>
-                                        {/* Nút View Detail */}
                                         <Button
                                             variant="outline-info"
                                             size="sm"
@@ -124,7 +111,6 @@ function ManageJobs() {
                  )
             )}
 
-            {/* Thêm lại Modal Detail */}
              <Modal show={showDetailModal} onHide={handleCloseDetailModal} size="lg" centered>
                 <Modal.Header closeButton>
                     <Modal.Title>Chi Tiết Công Việc</Modal.Title>
@@ -134,7 +120,7 @@ function ManageJobs() {
                         <JobDetail
                             key={selectedJob._id}
                             jobId={selectedJob._id}
-                            isPersonal={false} // Admin view không phải là personal
+                            isPersonal={false}
                         />
                     )}
                 </Modal.Body>
@@ -144,7 +130,6 @@ function ManageJobs() {
                     </Button>
                 </Modal.Footer>
             </Modal>
-             {/* Kết thúc Modal Detail */}
 
         </Container>
     );

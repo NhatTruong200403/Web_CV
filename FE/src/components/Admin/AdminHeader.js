@@ -1,7 +1,6 @@
-// src/components/Admin/AdminHeader.js
 import React from 'react';
-import { Container, Nav, Navbar, Button } from 'react-bootstrap'; // Thêm Button
-import { NavLink, useNavigate } from 'react-router-dom'; // Thêm NavLink, useNavigate
+import { Container, Nav, Navbar, Button } from 'react-bootstrap';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../provider/AuthProvider';
 import { FaSignOutAlt, FaUsersCog, FaHome, FaBriefcase, FaTags } from 'react-icons/fa';
 
@@ -11,13 +10,12 @@ function AdminHeader() {
 
     const handleLogout = () => {
         logout();
-        navigate("/"); // Chuyển về trang chủ sau khi logout
+        navigate("/");
     };
 
     return (
-        // Sử dụng variant và bg khác để phân biệt với Header thường
         <Navbar expand="lg" bg="dark" variant="dark" sticky="top" className="shadow-sm">
-            <Container fluid> {/* Sử dụng fluid để rộng hơn */}
+            <Container fluid>
                 <Navbar.Brand as={NavLink} to="/admin/home" className="fw-bold">
                      Admin Panel
                 </Navbar.Brand>
@@ -36,14 +34,11 @@ function AdminHeader() {
                         <Nav.Link as={NavLink} to="/admin/position-types">
                             <FaTags className="me-1" /> Quản Lý Loại Vị Trí
                         </Nav.Link>
-                        {/* Thêm các link admin khác */}
-                         {/* <Nav.Link as={NavLink} to="/admin/users">Quản Lý Users</Nav.Link> */}
-                         {/* <Nav.Link as={NavLink} to="/admin/jobs">Quản Lý Jobs</Nav.Link> */}
                     </Nav>
                     {/* Nút Logout */}
                     <Nav className="ms-auto">
                          <Button
-                            variant="outline-danger" // Màu khác để nổi bật
+                            variant="outline-danger"
                             size="sm"
                             onClick={handleLogout}
                         >

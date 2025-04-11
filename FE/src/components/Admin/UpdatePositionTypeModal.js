@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
-import { updatePositionType } from '../../services/PositionType'; // Adjust the path
+import { updatePositionType } from '../../services/PositionType';
 import { toast } from 'react-toastify';
 
 function UpdatePositionTypeModal({ show, handleClose, positionTypeToUpdate, refreshPositionTypes }) {

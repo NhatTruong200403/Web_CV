@@ -1,4 +1,3 @@
-// src/components/Admin/DeleteRoleModal.js
 import React, { useState } from 'react';
 import { Modal, Button, Alert } from 'react-bootstrap';
 import { deleteRole } from '../../services/RoleService';
@@ -34,7 +33,7 @@ function DeleteRoleModal({ show, handleClose, roleToDelete, refreshRoles }) {
         handleClose();
     };
 
-    if (!roleToDelete) return null; // Không hiển thị nếu không có role
+    if (!roleToDelete) return null;
 
     return (
         <Modal show={show} onHide={handleModalClose} centered backdrop="static" keyboard={false}>

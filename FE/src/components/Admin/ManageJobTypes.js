@@ -1,12 +1,8 @@
-// src/components/Admin/ManageJobTypes.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { Table, Button, Spinner, Alert, Container, Row, Col } from 'react-bootstrap';
-// Thêm icon Edit, Trash
 import { FaPlus, FaEdit, FaTrashAlt } from 'react-icons/fa';
-// Import service đầy đủ
 import { getAllJobTypes, deleteJobType, updateJobType } from '../../services/JobTypeService';
 import CreateJobTypeModal from './CreateJobTypeModal';
-// Import modal mới
 import UpdateJobTypeModal from './UpdateJobTypeModal';
 import DeleteJobTypeModal from './DeleteJobTypeModal';
 import { toast } from 'react-toastify';
@@ -16,16 +12,13 @@ function ManageJobTypes() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // State cho Modals
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [showUpdateModal, setShowUpdateModal] = useState(false); // Thêm state update
-    const [showDeleteModal, setShowDeleteModal] = useState(false); // Thêm state delete
+    const [showUpdateModal, setShowUpdateModal] = useState(false); 
+    const [showDeleteModal, setShowDeleteModal] = useState(false); 
 
-    // State để truyền dữ liệu vào Modals
-    const [jobTypeToUpdate, setJobTypeToUpdate] = useState(null); // Thêm state jobtype đang sửa
-    const [jobTypeToDelete, setJobTypeToDelete] = useState(null); // Thêm state jobtype đang xóa
+    const [jobTypeToUpdate, setJobTypeToUpdate] = useState(null); 
+    const [jobTypeToDelete, setJobTypeToDelete] = useState(null); 
 
-    // Hàm fetch job types (giữ nguyên)
     const fetchJobTypes = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -47,11 +40,9 @@ function ManageJobTypes() {
         fetchJobTypes();
     }, [fetchJobTypes]);
 
-    // ---- Hàm xử lý Modals ----
     const handleShowCreateModal = () => setShowCreateModal(true);
     const handleCloseCreateModal = () => setShowCreateModal(false);
 
-    // Thêm hàm cho Update Modal
     const handleShowUpdateModal = (jobType) => {
         setJobTypeToUpdate(jobType);
         setShowUpdateModal(true);
@@ -61,7 +52,6 @@ function ManageJobTypes() {
         setJobTypeToUpdate(null);
     };
 
-     // Thêm hàm cho Delete Modal
     const handleShowDeleteModal = (jobType) => {
         setJobTypeToDelete(jobType);
         setShowDeleteModal(true);
@@ -70,7 +60,6 @@ function ManageJobTypes() {
         setShowDeleteModal(false);
         setJobTypeToDelete(null);
     };
-    // ---- Kết thúc hàm xử lý Modals ----
 
     return (
         <Container fluid className="mt-4">
@@ -85,11 +74,9 @@ function ManageJobTypes() {
                 </Col>
             </Row>
 
-            {/* Loading and Error States */}
             {loading && <div className="text-center my-5"><Spinner animation="border" /><p>Đang tải...</p></div>}
             {error && !loading && <Alert variant="danger"><strong>Lỗi:</strong> {error}</Alert>}
 
-            {/* Job Types Table */}
             {!loading && !error && (
                  jobTypes.length > 0 ? (
                     <Table striped bordered hover responsive size="sm">
@@ -99,7 +86,7 @@ function ManageJobTypes() {
                                 <th>ID</th>
                                 <th>Tên Loại Công Việc</th>
                                 <th>Mô tả</th>
-                                <th>Hành Động</th> {/* Thêm lại cột Hành động */}
+                                <th>Hành Động</th> 
                             </tr>
                         </thead>
                         <tbody>
@@ -109,9 +96,7 @@ function ManageJobTypes() {
                                     <td>{jobType._id}</td>
                                     <td>{jobType.name}</td>
                                     <td>{jobType.description || 'N/A'}</td>
-                                    {/* Thêm cột Hành động */}
                                     <td>
-                                         {/* Nút Edit */}
                                          <Button
                                             variant="outline-warning"
                                             size="sm"
@@ -121,14 +106,11 @@ function ManageJobTypes() {
                                         >
                                             <FaEdit />
                                         </Button>
-                                         {/* Nút Delete */}
                                         <Button
                                             variant="outline-danger"
                                             size="sm"
                                             onClick={() => handleShowDeleteModal(jobType)}
                                             title="Xóa"
-                                            // Có thể disable nếu là các loại mặc định
-                                            // disabled={['Full-time', 'Part-time'].includes(jobType.name)}
                                         >
                                             <FaTrashAlt />
                                         </Button>
@@ -142,20 +124,17 @@ function ManageJobTypes() {
                  )
             )}
 
-            {/* Modals */}
             <CreateJobTypeModal
                 show={showCreateModal}
                 handleClose={handleCloseCreateModal}
                 refreshJobTypes={fetchJobTypes}
             />
-            {/* Thêm Modal Update */}
              <UpdateJobTypeModal
                 show={showUpdateModal}
                 handleClose={handleCloseUpdateModal}
                 jobTypeToUpdate={jobTypeToUpdate}
                 refreshJobTypes={fetchJobTypes}
             />
-             {/* Thêm Modal Delete */}
              <DeleteJobTypeModal
                 show={showDeleteModal}
                 handleClose={handleCloseDeleteModal}

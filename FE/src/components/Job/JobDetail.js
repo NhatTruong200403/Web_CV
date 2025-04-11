@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, Badge, Stack, Button, Spinner, Alert } from "react-bootstrap";
 import { FaMapMarkerAlt, FaBriefcase, FaGraduationCap, FaDollarSign, FaRegListAlt, FaRegFileAlt, FaCheckSquare, FaExternalLinkAlt, FaBookmark, FaCheckCircle } from "react-icons/fa"; // Thêm FaCheckCircle
 import { getJobById, applyJob } from '../../services/JobService';
-import { getUserApplies } from '../../services/UserService'; // Import hàm lấy applied jobs
+import { getUserApplies } from '../../services/UserService';
 import UpdateJobModal from '../User/UpdateJobModal';
 import DeleteJobModal from '../User/DeleteJobModal';
 import ApplyConfirmModal from './ApplyConfirmModal';
@@ -22,7 +22,7 @@ const renderListItems = (items) => {
     );
 };
 
-function JobDetail({ jobId, isPersonal }) { // Bỏ reloadChange nếu không dùng
+function JobDetail({ jobId, isPersonal }) { 
     const [job, setJob] = useState({});
     const [loadingJob, setLoadingJob] = useState(true);
     const [showUpdateJobModal, setShowUpdateJobModal] = useState(false);
@@ -31,10 +31,9 @@ function JobDetail({ jobId, isPersonal }) { // Bỏ reloadChange nếu không d�
     const [isApplying, setIsApplying] = useState(false);
     const [applyError, setApplyError] = useState('');
     const { auth } = useAuth();
-    const [appliedJobIds, setAppliedJobIds] = useState([]); // State lưu các ID job đã apply
-    const [loadingAppliedJobs, setLoadingAppliedJobs] = useState(true); // State loading applied jobs
+    const [appliedJobIds, setAppliedJobIds] = useState([]); 
+    const [loadingAppliedJobs, setLoadingAppliedJobs] = useState(true);
 
-    // --- Fetch chi tiết công việc ---
     const fetchJobDetails = async () => {
         if (!jobId) return;
         setLoadingJob(true);
@@ -50,35 +49,30 @@ function JobDetail({ jobId, isPersonal }) { // Bỏ reloadChange nếu không d�
         }
     };
 
-    // --- Fetch danh sách ID công việc đã ứng tuyển của user ---
     const fetchAppliedJobs = async () => {
-        if (auth.role !== 'User') { // Chỉ fetch nếu là User
+        if (auth.role !== 'User') { 
             setLoadingAppliedJobs(false);
             return;
         }
         setLoadingAppliedJobs(true);
         try {
             const response = await getUserApplies();
-            // Backend trả về user object có chứa mảng appliJobs
-            setAppliedJobIds(response.data?.appliJobs || []); // Lấy mảng ID
+            setAppliedJobIds(response.data?.appliJobs || []);
         } catch (error) {
             console.error("Error fetching applied jobs:", error);
-            setAppliedJobIds([]); // Đặt thành mảng rỗng nếu lỗi
-            // Không cần toast ở đây vì nó không quan trọng bằng chi tiết job
+            setAppliedJobIds([]);
         } finally {
             setLoadingAppliedJobs(false);
         }
     };
 
-    // Fetch job details khi jobId thay đổi
     useEffect(() => {
         fetchJobDetails();
     }, [jobId]);
 
-    // Fetch danh sách applied jobs khi component mount hoặc user thay đổi
     useEffect(() => {
         fetchAppliedJobs();
-    }, [auth.token]); // Fetch lại nếu token thay đổi (user đăng nhập/đăng xuất)
+    }, [auth.token]);
 
     // --- Xử lý Apply ---
     const handleShowApplyConfirm = () => {
@@ -98,7 +92,6 @@ function JobDetail({ jobId, isPersonal }) { // Bỏ reloadChange nếu không d�
             await applyJob(job._id);
             toast.success(`Ứng tuyển thành công vào vị trí "${job.title}"!`);
             setShowApplyConfirmModal(false);
-            // Cập nhật lại danh sách applied jobs ngay lập tức để nút chuyển trạng thái
             fetchAppliedJobs();
         } catch (err) {
             console.error("Error applying for job:", err);
@@ -147,7 +140,7 @@ function JobDetail({ jobId, isPersonal }) { // Bỏ reloadChange nếu không d�
     } = job;
 
     const hasSalaryInfo = salary && (salary.min || salary.max || salary.fixed);
-    const hasApplied = appliedJobIds.includes(job._id); // Kiểm tra xem đã apply job này chưa
+    const hasApplied = appliedJobIds.includes(job._id);
 
     const scrollableBodyStyle = {
         maxHeight: 'calc(100vh - 250px)',
@@ -157,10 +150,8 @@ function JobDetail({ jobId, isPersonal }) { // Bỏ reloadChange nếu không d�
 
     return (
         <>
-            <Card className="mb-3 job-posting-card shadow-sm w-100 d-flex flex-column h-100">
-                {/* Card.Header và Card.Body giữ nguyên như trước */}
+            <Card className="mb-3 job-posting-card shadow-sm w-100 d-flex flex-column h-100">  
                 <Card.Header className="bg-light border-bottom p-3">
-                    {/* ... nội dung header ... */}
                      <Stack gap={1}>
                         <Card.Title as="h4" className="mb-1">{title}</Card.Title>
                         <Card.Subtitle className="mb-2 text-muted">
@@ -172,7 +163,6 @@ function JobDetail({ jobId, isPersonal }) { // Bỏ reloadChange nếu không d�
                     </Stack>
                 </Card.Header>
                 <Card.Body className="text-start p-3 flex-grow-1" style={scrollableBodyStyle}>
-                     {/* ... nội dung body (details, descriptions, ...) ... */}
                       <Stack direction="horizontal" gap={3} className="flex-wrap mb-4 pb-3 border-bottom">
                         <div>
                             <FaBriefcase className="me-2 text-primary" />
@@ -233,19 +223,16 @@ function JobDetail({ jobId, isPersonal }) { // Bỏ reloadChange nếu không d�
                     {isPersonal && auth.role === 'User' && (
                         <Stack direction="horizontal" gap={2} className="justify-content-end">
                             {hasApplied ? (
-                                // --- Hiển thị nếu đã Apply ---
                                 <Button variant="success" size="sm" disabled>
                                     <FaCheckCircle className="me-1" /> Đã ứng tuyển
                                 </Button>
                             ) : (
-                                // --- Hiển thị nếu chưa Apply ---
                                 <Button variant="primary" size="sm" onClick={handleShowApplyConfirm}>
                                     <FaExternalLinkAlt className="me-1" /> Apply Now
                                 </Button>
                             )}
                         </Stack>
                     )}
-                    {/* --- NÚT CHO COMPANY/ADMIN --- */}
                     {!isPersonal && (
                          // ... code nút Update/Delete cho Company/Admin giữ nguyên ...
                          <Stack direction="horizontal" gap={2} className="justify-content-end">
@@ -268,7 +255,6 @@ function JobDetail({ jobId, isPersonal }) { // Bỏ reloadChange nếu không d�
                 </Card.Footer>
             </Card>
 
-            {/* --- Modals --- */}
             <ApplyConfirmModal
                 show={showApplyConfirmModal}
                 handleClose={handleCloseApplyConfirm}
@@ -278,14 +264,13 @@ function JobDetail({ jobId, isPersonal }) { // Bỏ reloadChange nếu không d�
                 isLoading={isApplying}
                 error={applyError}
             />
-             {/* ... Modals Update/Delete ... */}
              {!isPersonal && (
                 <>
                     <UpdateJobModal
                         show={showUpdateJobModal}
                         handleClose={() => {
                             setShowUpdateJobModal(false);
-                            fetchJobDetails(); // Fetch lại job sau khi update
+                            fetchJobDetails();
                         }}
                         job={job}
                     />
@@ -293,7 +278,6 @@ function JobDetail({ jobId, isPersonal }) { // Bỏ reloadChange nếu không d�
                         show={showDeleteJobModal}
                         handleClose={() => {
                             setShowDeleteJobModal(false);
-                            // Có thể thêm logic để xóa job khỏi list ở component cha nếu cần
                         }}
                         id={job._id}
                     />

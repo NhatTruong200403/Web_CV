@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Button, Alert } from 'react-bootstrap';
-import { deletePositionType } from '../../services/PositionType'; // Adjust the path
+import { deletePositionType } from '../../services/PositionType';
 import { toast } from 'react-toastify';
 
 function DeletePositionTypeModal({ show, handleClose, positionTypeToDelete, refreshPositionTypes }) {

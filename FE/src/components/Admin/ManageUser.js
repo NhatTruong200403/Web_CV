@@ -1,18 +1,15 @@
-// src/components/Admin/ManageUsers.js
 import React, { useState, useEffect, useCallback } from 'react';
-// Add Button, Modal, FaTrashAlt
 import { Container, Table, Spinner, Alert, Button, Modal } from 'react-bootstrap';
-import { FaTrashAlt } from 'react-icons/fa'; // Import icon
+import { FaTrashAlt } from 'react-icons/fa';
 import axios from '../../services/custom-axios';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
-import { deleteUser } from '../../services/UserService'; // Import the delete function
+import { deleteUser } from '../../services/UserService';
 
 const getAllAdminUsers = () => {
     return axios.get('/users');
 };
 
-// New Delete Confirmation Modal Component (can be in the same file or separate)
 function DeleteUserModal({ show, handleClose, userToDelete, refreshUsers }) {
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -22,8 +19,8 @@ function DeleteUserModal({ show, handleClose, userToDelete, refreshUsers }) {
         try {
             await deleteUser(userToDelete._id);
             toast.success(`User "${userToDelete.username}" deleted successfully!`);
-            refreshUsers(); // Refresh the user list
-            handleClose(); // Close the modal
+            refreshUsers();
+            handleClose(); 
         } catch (err) {
             console.error("Error deleting user:", err);
             toast.error(err.response?.data?.message || 'Failed to delete user.');
@@ -59,12 +56,10 @@ function ManageUsers() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    // State for delete modal
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
 
     const fetchUsers = useCallback(async () => {
-        // ... (fetchUsers logic remains the same)
         setLoading(true);
         setError(null);
         try {
@@ -85,7 +80,7 @@ function ManageUsers() {
         fetchUsers();
     }, [fetchUsers]);
 
-    // Handlers for delete modal
+
     const handleShowDeleteModal = (user) => {
         setUserToDelete(user);
         setShowDeleteModal(true);
@@ -113,7 +108,7 @@ function ManageUsers() {
                             <th>Email</th>
                             <th>Role</th>
                             <th>Created At</th>
-                            <th>Actions</th> {/* Add Actions column */}
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -128,7 +123,6 @@ function ManageUsers() {
                                     {user.createdAt ? format(new Date(user.createdAt), 'dd/MM/yyyy HH:mm') : 'N/A'}
                                 </td>
                                 <td>
-                                    {/* Add Delete Button - Prevent deleting Admins? */}
                                     {user.role?.name !== 'Admin' && (
                                         <Button
                                             variant="outline-danger"
@@ -148,12 +142,11 @@ function ManageUsers() {
                 <Alert variant="info">No users found.</Alert>
             )}
 
-            {/* Delete Confirmation Modal */}
             <DeleteUserModal
                 show={showDeleteModal}
                 handleClose={handleCloseDeleteModal}
                 userToDelete={userToDelete}
-                refreshUsers={fetchUsers} // Pass fetchUsers to refresh list after delete
+                refreshUsers={fetchUsers}
             />
         </Container>
     );

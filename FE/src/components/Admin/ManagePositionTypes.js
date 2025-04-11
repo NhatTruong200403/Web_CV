@@ -6,7 +6,7 @@ import {
     createPositionType,
     updatePositionType,
     deletePositionType,
-} from '../../services/PositionType'; // Adjust the path as necessary
+} from '../../services/PositionType';
 import CreatePositionTypeModal from './CreatePositionTypeModal';
 import UpdatePositionTypeModal from './UpdatePositionTypeModal';
 import DeletePositionTypeModal from './DeletePositionTypeModal';
@@ -17,16 +17,13 @@ function ManagePositionTypes() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // State for Modals
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    // State to pass data to Modals
     const [positionTypeToUpdate, setPositionTypeToUpdate] = useState(null);
     const [positionTypeToDelete, setPositionTypeToDelete] = useState(null);
 
-    // Fetch position types
     const fetchPositionTypes = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -48,7 +45,6 @@ function ManagePositionTypes() {
         fetchPositionTypes();
     }, [fetchPositionTypes]);
 
-    // Modal Handlers
     const handleShowCreateModal = () => setShowCreateModal(true);
     const handleCloseCreateModal = () => setShowCreateModal(false);
 

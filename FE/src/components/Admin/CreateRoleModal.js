@@ -1,7 +1,6 @@
-// src/components/Admin/CreateRoleModal.js
 import React, { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
-import { createRole } from '../../services/RoleService'; // Import service
+import { createRole } from '../../services/RoleService';
 import { toast } from 'react-toastify';
 
 function CreateRoleModal({ show, handleClose, refreshRoles }) {
@@ -11,7 +10,7 @@ function CreateRoleModal({ show, handleClose, refreshRoles }) {
 
     const handleInputChange = (event) => {
         setRoleName(event.target.value);
-        if (error) setError(''); // Xóa lỗi khi người dùng bắt đầu nhập lại
+        if (error) setError('');
     };
 
     const handleSubmit = async (event) => {
@@ -26,15 +25,15 @@ function CreateRoleModal({ show, handleClose, refreshRoles }) {
         try {
             await createRole({ name: roleName });
             toast.success('Tạo vai trò thành công!');
-            refreshRoles(); // Gọi hàm để tải lại danh sách roles ở component cha
-            handleModalClose(); // Đóng modal sau khi thành công
+            refreshRoles(); 
+            handleModalClose(); 
         } catch (err) {
             console.error("Error creating role:", err);
             const errorMsg = err.response?.data?.message || err.message || 'Đã xảy ra lỗi khi tạo vai trò.';
-             if (err.response?.status === 409) { // Conflict - Role name exists
+             if (err.response?.status === 409) { 
                 setError('Tên vai trò này đã tồn tại.');
              } else {
-                setError(errorMsg); // Hiển thị lỗi chung
+                setError(errorMsg);
              }
             toast.error(`Tạo vai trò thất bại: ${errorMsg}`);
         } finally {
@@ -43,10 +42,10 @@ function CreateRoleModal({ show, handleClose, refreshRoles }) {
     };
 
     const handleModalClose = () => {
-        setRoleName(''); // Reset state khi đóng modal
+        setRoleName('');
         setError('');
         setIsSubmitting(false);
-        handleClose(); // Gọi hàm đóng modal từ props
+        handleClose();
     };
 
     return (

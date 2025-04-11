@@ -4,4 +4,8 @@ function getAllJobsByCompanyId(id) {
     return axios.get(`companies/jobs/${id}`)
 }
 
-export { getAllJobsByCompanyId }
+function getJobApplicants(jobId) {
+    return axios.get(`jobs/apply/${jobId}`); 
+}
+
+export { getAllJobsByCompanyId, getJobApplicants }

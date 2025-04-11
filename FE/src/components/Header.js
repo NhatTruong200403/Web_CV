@@ -22,7 +22,8 @@ function Header() {
     const [showUpCompanyModal, setShowUpCompanyModal] = useState(false);
     const [showCreateJobModal, setShowCreateJobModal] = useState(false);
     const navigate = useNavigate();
-    const { logout, auth } = useAuth(); // Lấy auth để kiểm tra role và token
+    const { logout, auth } = useAuth();
+    const username = auth.username || '';
 
     const handleLogout = () => {
         logout();
@@ -91,7 +92,7 @@ function Header() {
                             ) : (
                                 // --- Đã đăng nhập ---
                                 <NavDropdown
-                                    title={<><FaUserCircle className="me-1" /> {auth.role || 'Tài khoản'}</>} // Hiển thị Role hoặc chữ Tài khoản
+                                    title={<><FaUserCircle className="me-1" /> {auth.username || 'Tài khoản'}</>} // Hiển thị Role hoặc chữ Tài khoản
                                     id="user-nav-dropdown"
                                     align="end" // Căn dropdown sang phải
                                 >
