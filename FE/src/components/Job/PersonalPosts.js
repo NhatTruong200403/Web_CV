@@ -51,7 +51,6 @@ function PersonalPosts() {
                 }
 
                 <Row >
-                    {/* Cột bên trái: Danh sách công việc */}
                     <Col md={6}>
                         {jobs.map((job, index) => (
                             <div key={index} className="mt-2">

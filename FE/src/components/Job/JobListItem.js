@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, Badge, Button, Stack } from 'react-bootstrap';
 import { FaMapMarkerAlt, FaBuilding, FaDollarSign } from 'react-icons/fa';
-import styles from './JobListItem.module.css'; // Import CSS Module
+import styles from './JobListItem.module.css';
 
 function JobListItem({ job, onSelectJob, isSelected }) {
     const {
@@ -45,12 +45,6 @@ function JobListItem({ job, onSelectJob, isSelected }) {
                             )}
                         </div>
                     )}
-                     {/* Chỉ hiển thị một phần nhỏ của details nếu cần */}
-                     {/* {job.details && job.details[0] &&
-                        <Card.Text className={`small text-muted ${styles.jobSnippet}`}>
-                           {job.details[0].substring(0, 80)}...
-                        </Card.Text>
-                     } */}
                 </Stack>
             </Card.Body>
         </Card>

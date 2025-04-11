@@ -1,30 +1,24 @@
-// src/components/User/UserProfile.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Row, Col, Card, Form, Button, Image, Alert, Spinner } from 'react-bootstrap';
 import { useAuth } from '../../provider/AuthProvider';
-// Import đầy đủ các hàm service cần thiết
 import { getMe, updateUser, uploadAvatar, uploadUserCV, generateAndUploadCV } from '../../services/UserService';
 import { toast } from 'react-toastify';
 
 function UserProfile() {
-    const { auth } = useAuth(); // Dùng để lấy thông tin user nếu cần, hoặc ID
+    const { auth } = useAuth();
     const [user, setUser] = useState(null);
-    // formData chứa các trường hiển thị trên form
     const [formData, setFormData] = useState({
         email: '',
         username: '',
-        fullName: '', // Giữ lại để hiển thị
-        phone: '',    // Tên ở frontend là phone
-        address: '',  // Giữ lại để hiển thị
-        // Thêm các trường khác từ API nếu cần hiển thị
+        fullName: '', 
+        phone: '',   
+        address: '',
         avatarUrl: '',
         cvUrl: '',
     });
     const [avatarFile, setAvatarFile] = useState(null);
     const [cvFile, setCvFile] = useState(null);
     const [previewAvatar, setPreviewAvatar] = useState(null);
-    // Bỏ state currentCvUrl, dùng trực tiếp từ formData.cvUrl
-    // const [currentCvUrl, setCurrentCvUrl] = useState(null);
     const [loading, setLoading] = useState(true);
     const [updatingProfile, setUpdatingProfile] = useState(false);
     const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -32,27 +26,23 @@ function UserProfile() {
     const [generatingCv, setGeneratingCv] = useState(false);
     const [error, setError] = useState('');
 
-    // Hàm fetch user data, dùng useCallback để tránh tạo lại hàm mỗi lần render
     const fetchUser = useCallback(async () => {
         setLoading(true);
         setError('');
         try {
-            const response = await getMe(); // Fetch dữ liệu user đang đăng nhập
+            const response = await getMe();
             const userData = response.data;
             setUser(userData);
-            // Cập nhật formData với dữ liệu từ API
             setFormData({
                 email: userData.email || '',
                 username: userData.username || '',
-                fullName: userData.fullName || '', // Lấy từ API (nếu có) hoặc để trống
-                phone: userData.phonenumber || '', // Lấy phonenumber từ API gán cho phone ở form
-                address: userData.address || '',   // Lấy từ API (nếu có) hoặc để trống
-                avatarUrl: userData.avatarUrl || '/default-avatar.png', // Lấy avatarUrl
-                cvUrl: userData.cvFile || null // Lấy cvFile từ API gán cho cvUrl ở form
+                fullName: userData.fullName || '', 
+                phone: userData.phonenumber || '', 
+                address: userData.address || '',  
+                avatarUrl: userData.avatarUrl || '/default-avatar.png',
+                cvUrl: userData.cvFile || null 
             });
-            setPreviewAvatar(userData.avatarUrl || '/default-avatar.png'); // Set avatar preview
-            // Bỏ setCurrentCvUrl, dùng formData.cvUrl
-            // setCurrentCvUrl(userData.cvFile || null);
+            setPreviewAvatar(userData.avatarUrl || '/default-avatar.png');
         } catch (err) {
             setError('Không thể tải dữ liệu người dùng.');
             console.error("Lỗi fetch user:", err);

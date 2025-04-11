@@ -1,12 +1,9 @@
-// src/components/User/ManageCv.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner, Accordion, InputGroup } from 'react-bootstrap';
-import { FaPlus, FaTrash } from 'react-icons/fa'; // Import icons
-// Bỏ import useAuth vì không dùng trực tiếp ở đây
-import { getMe, uploadUserCV, generateCvFromData } from '../../services/UserService'; // Đảm bảo import đúng các hàm service
+import { FaPlus, FaTrash } from 'react-icons/fa';
+import { getMe, uploadUserCV, generateCvFromData } from '../../services/UserService';
 import { toast } from 'react-toastify';
 
-// --- Mẫu dữ liệu cho các mục trong mảng (giữ nguyên) ---
 const educationTemplate = { degree: '', school: '', year: '', gpa: '', relevantCourses: '' };
 const experienceTemplate = { title: '', company: '', duration: '', description: '', technologies: '' };
 const projectTemplate = { name: '', description: '', technologies: '', github: '' };
@@ -14,15 +11,13 @@ const certificationTemplate = { name: '', year: '', issuer: '' };
 const languageTemplate = { language: '', level: '' };
 
 function ManageCv() {
-    const [user, setUser] = useState(null); // Vẫn giữ state user nếu cần dùng thông tin khác
-    // --- State cho Upload CV ---
-    const [currentCvUrl, setCurrentCvUrl] = useState(null); // State lưu URL CV hiện tại (nếu có)
-    const [cvFile, setCvFile] = useState(null); // State lưu file CV người dùng chọn
-    const [uploadingCv, setUploadingCv] = useState(false); // State báo đang upload
-    const [loadingUser, setLoadingUser] = useState(true); // State loading dữ liệu user
-    const [errorUser, setErrorUser] = useState(''); // State báo lỗi khi load user
+    const [user, setUser] = useState(null);
+    const [currentCvUrl, setCurrentCvUrl] = useState(null);
+    const [cvFile, setCvFile] = useState(null);
+    const [uploadingCv, setUploadingCv] = useState(false);
+    const [loadingUser, setLoadingUser] = useState(true);
+    const [errorUser, setErrorUser] = useState('');
 
-    // State cho Form Generate CV (giữ nguyên từ code gốc của bạn)
     const initialCvFormData = {
         personalInfo: { name: '', email: '', phone: '', address: '', linkedin: '', github: '', portfolio: '' },
         education: [educationTemplate],
@@ -37,17 +32,15 @@ function ManageCv() {
     const [generatingCv, setGeneratingCv] = useState(false);
     const [generateError, setGenerateError] = useState('');
 
-    // Hàm fetch user (lấy thông tin user và CV hiện tại) - Kết hợp logic của cả upload và generate
     const fetchUser = useCallback(async () => {
         setLoadingUser(true);
         setErrorUser('');
         try {
             const response = await getMe();
             const userData = response.data;
-            setUser(userData); // Cập nhật state user
-            setCurrentCvUrl(userData?.cvFile || null); // Lấy URL CV hiện tại
+            setUser(userData);
+            setCurrentCvUrl(userData?.cvFile || null);
 
-            // Đồng bộ personalInfo cho form generate CV khi fetch user
             setCvFormData(prev => ({
                 ...prev,
                 personalInfo: {
@@ -55,27 +48,25 @@ function ManageCv() {
                     email: userData?.email || prev.personalInfo.email || '',
                     phone: userData?.phonenumber || prev.personalInfo.phone || '',
                     address: userData?.address || prev.personalInfo.address || '',
-                    linkedin: prev.personalInfo.linkedin || '', // Giữ lại giá trị user đã nhập nếu có
+                    linkedin: prev.personalInfo.linkedin || '',
                     github: prev.personalInfo.github || '',
                     portfolio: prev.personalInfo.portfolio || '',
                 }
-                // Giữ nguyên các phần khác (education, experience,...) để user không mất dữ liệu
             }));
 
         } catch (err) {
             setErrorUser('Không thể tải dữ liệu người dùng.');
             console.error("Lỗi fetch user:", err);
-            toast.error('Không thể tải dữ liệu người dùng.'); // Thêm toast báo lỗi
+            toast.error('Không thể tải dữ liệu người dùng.');
         } finally {
             setLoadingUser(false);
         }
-    }, []); // Dependency rỗng, gọi 1 lần khi mount hoặc gọi lại thủ công
+    }, []);
 
     useEffect(() => {
         fetchUser();
-    }, [fetchUser]); // Gọi fetchUser khi component mount
+    }, [fetchUser]);
 
-    // --- PHẦN XỬ LÝ UPLOAD CV (Code đã được chuẩn hóa) ---
     const handleCvFileChange = (e) => {
         const file = e.target.files[0];
         if (file && file.type === "application/pdf") {
@@ -98,24 +89,20 @@ function ManageCv() {
         try {
             await uploadUserCV(cvFile);
             toast.success('Tải lên CV thành công!');
-            fetchUser(); // Tải lại thông tin user (bao gồm CV mới)
+            fetchUser();
             setCvFile(null);
-            const fileInput = document.getElementById('formFileCvUpload'); // Lấy đúng ID của input
+            const fileInput = document.getElementById('formFileCvUpload');
             if (fileInput) {
-                fileInput.value = null; // Reset input file
+                fileInput.value = null;
             }
         } catch (err) {
             toast.error(err.response?.data?.message || 'Tải lên CV thất bại. Vui lòng thử lại.');
             console.error("Lỗi upload CV:", err);
-            // Không cần setErrorUser ở đây vì đây là lỗi upload, không phải lỗi load user
         } finally {
             setUploadingCv(false);
         }
     };
-    // --- KẾT THÚC PHẦN XỬ LÝ UPLOAD CV ---
 
-
-    // --- PHẦN XỬ LÝ FORM GENERATE CV (Giữ nguyên từ code gốc của bạn) ---
     const handlePersonalInfoChange = (e) => {
         const { name, value } = e.target;
         setCvFormData(prev => ({
@@ -184,11 +171,9 @@ function ManageCv() {
         console.log("Submitting CV Data:", dataToSend);
 
         try {
-            // Lưu ý: Hàm generateCvFromData cần được implement ở UserService và backend
             const response = await generateCvFromData(dataToSend);
             toast.success('Gửi yêu cầu tạo CV thành công! CV mới sẽ được cập nhật.');
-            fetchUser(); // Fetch lại user để thấy CV mới
-            // Có thể không cần reset form ở đây
+            fetchUser();
         } catch (err) {
             const errorMsg = err.response?.data?.message || 'Tạo CV từ form thất bại.';
             setGenerateError(errorMsg);
@@ -198,25 +183,19 @@ function ManageCv() {
             setGeneratingCv(false);
         }
     };
-    // --- KẾT THÚC PHẦN XỬ LÝ FORM GENERATE CV ---
 
-
-    // --- RENDER ---
     if (loadingUser) return <div className="text-center my-5"><Spinner animation="border" /> <p>Đang tải dữ liệu...</p></div>;
     if (errorUser) return <Alert variant="danger">{errorUser}</Alert>;
-    // Không cần kiểm tra !user nữa vì đã có loading/error state
 
     return (
         <Container className="mt-4">
             <h2 className="mb-4">Quản lý Hồ sơ CV</h2>
 
             <Row>
-                {/* --- Cột Upload CV --- */}
-                <Col md={5} lg={4} className="mb-3 mb-md-0"> {/* Thêm class mb-md-0 để không có margin bottom trên màn lớn */}
+                <Col md={5} lg={4} className="mb-3 mb-md-0">
                     <Card>
                         <Card.Header>Tải lên CV có sẵn</Card.Header>
                         <Card.Body>
-                             {/* Hiển thị link hoặc thông báo dựa trên currentCvUrl */}
                              {currentCvUrl ? (
                                  <p className="small mb-2">
                                      <a href={currentCvUrl} target="_blank" rel="noopener noreferrer">Xem CV hiện tại</a>
@@ -224,23 +203,22 @@ function ManageCv() {
                              ) : (
                                  <p className="small mb-2 text-muted">Bạn chưa có CV nào được tải lên.</p>
                              )}
-                             {/* Input chọn file */}
-                             <Form.Group controlId="formFileCvUpload" className="mb-2"> {/* Đảm bảo ID khớp với logic reset */}
+                             <Form.Group controlId="formFileCvUpload" className="mb-2">
                                  <Form.Label className="small">{currentCvUrl ? 'Thay thế CV (PDF)' : 'Chọn file CV (PDF)'}</Form.Label>
                                  <Form.Control
                                      type="file"
                                      accept=".pdf"
                                      onChange={handleCvFileChange}
                                      size="sm"
-                                     disabled={uploadingCv} // Disable khi đang upload
+                                     disabled={uploadingCv}
                                  />
                              </Form.Group>
                              {/* Nút tải lên */}
                             <Button
-                                variant="primary" // Đổi màu nút nếu muốn
+                                variant="primary"
                                 size="sm"
                                 onClick={handleCvUpload}
-                                disabled={!cvFile || uploadingCv} // Disable khi chưa chọn file hoặc đang upload
+                                disabled={!cvFile || uploadingCv}
                             >
                                 {uploadingCv ? (
                                     <>
@@ -255,7 +233,6 @@ function ManageCv() {
                     </Card>
                 </Col>
 
-                {/* --- Cột Tạo CV từ Form --- */}
                 <Col md={7} lg={8}>
                     <Card>
                         <Card.Header>Tạo CV mới từ thông tin chi tiết</Card.Header>
@@ -264,7 +241,6 @@ function ManageCv() {
                                 {generateError && <Alert variant="danger" size="sm">{generateError}</Alert>}
 
                                 <Accordion defaultActiveKey="0" alwaysOpen>
-                                    {/* --- Personal Info --- */}
                                     <Accordion.Item eventKey="0">
                                         <Accordion.Header>Thông tin cá nhân</Accordion.Header>
                                         <Accordion.Body>
@@ -299,26 +275,23 @@ function ManageCv() {
                                         </Accordion.Body>
                                     </Accordion.Item>
 
-                                    {/* --- Education --- */}
                                     <Accordion.Item eventKey="1">
                                         <Accordion.Header>Học vấn</Accordion.Header>
                                         <Accordion.Body>
                                             {cvFormData.education.map((edu, index) => (
-                                                <div key={index} className="mb-3 p-2 border rounded position-relative"> {/* Thêm position-relative */}
-                                                    {/* Nút xóa đặt ở góc trên bên phải */}
+                                                <div key={index} className="mb-3 p-2 border rounded position-relative">
                                                     {cvFormData.education.length > 1 && (
                                                         <Button
                                                             variant="outline-danger"
                                                             size="sm"
-                                                            className="position-absolute top-0 end-0 m-1 p-1" // Định vị nút xóa
-                                                            style={{ lineHeight: '1', zIndex: 1 }} // Đảm bảo nút hiển thị đúng
+                                                            className="position-absolute top-0 end-0 m-1 p-1"
+                                                            style={{ lineHeight: '1', zIndex: 1 }}
                                                             onClick={() => handleRemoveItem('education', index)}
                                                             title="Xóa mục này"
                                                         >
                                                             <FaTrash />
                                                         </Button>
                                                     )}
-                                                    {/* <h6>Mục học vấn #{index + 1}</h6> */} {/* Có thể bỏ tiêu đề này */}
                                                     <Form.Group className="mb-2">
                                                         <Form.Label size="sm">Bằng cấp/Chuyên ngành</Form.Label>
                                                         <Form.Control size="sm" type="text" value={edu.degree} onChange={(e) => handleArrayItemChange('education', index, 'degree', e.target.value)} />
@@ -347,7 +320,6 @@ function ManageCv() {
                                         </Accordion.Body>
                                     </Accordion.Item>
 
-                                    {/* --- Experience --- */}
                                     <Accordion.Item eventKey="2">
                                         <Accordion.Header>Kinh nghiệm làm việc</Accordion.Header>
                                         <Accordion.Body>
@@ -386,7 +358,6 @@ function ManageCv() {
                                         </Accordion.Body>
                                     </Accordion.Item>
 
-                                    {/* --- Projects --- */}
                                     <Accordion.Item eventKey="3">
                                         <Accordion.Header>Dự án cá nhân</Accordion.Header>
                                         <Accordion.Body>
@@ -421,7 +392,6 @@ function ManageCv() {
                                         </Accordion.Body>
                                     </Accordion.Item>
 
-                                    {/* --- Skills --- */}
                                     <Accordion.Item eventKey="4">
                                         <Accordion.Header>Kỹ năng</Accordion.Header>
                                         <Accordion.Body>
@@ -440,7 +410,6 @@ function ManageCv() {
                                         </Accordion.Body>
                                     </Accordion.Item>
 
-                                     {/* --- Certifications --- */}
                                      <Accordion.Item eventKey="5">
                                         <Accordion.Header>Chứng chỉ</Accordion.Header>
                                         <Accordion.Body>
@@ -471,7 +440,6 @@ function ManageCv() {
                                          </Accordion.Body>
                                      </Accordion.Item>
 
-                                    {/* --- Languages --- */}
                                     <Accordion.Item eventKey="6">
                                         <Accordion.Header>Ngôn ngữ</Accordion.Header>
                                         <Accordion.Body>
@@ -498,7 +466,6 @@ function ManageCv() {
                                         </Accordion.Body>
                                     </Accordion.Item>
 
-                                     {/* --- Hobbies --- */}
                                     <Accordion.Item eventKey="7">
                                         <Accordion.Header>Sở thích</Accordion.Header>
                                         <Accordion.Body>

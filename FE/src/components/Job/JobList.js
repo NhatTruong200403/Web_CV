@@ -100,7 +100,6 @@ function JobList() {
 
             <Row>
                 <Col md={5} lg={4} className={styles.jobListColumn}>
-                    {/* Thanh tìm kiếm */}
                     <InputGroup className="mb-3">
                         <InputGroup.Text><FaSearch /></InputGroup.Text>
                         <Form.Control
